@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
+import Layouts from "../pages/Layouts";
 
 
 const Login = lazy(() => import("../pages/auth/Login"));
@@ -15,7 +16,9 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+           <Route element={<Layouts />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
       
       </Routes>
     </Suspense>
