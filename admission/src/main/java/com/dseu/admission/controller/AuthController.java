@@ -1,11 +1,11 @@
 package com.dseu.admission.controller;
 
-import com.dseu.admission.dto.LoginRequest;
-import com.dseu.admission.dto.OtpVerifyRequest;
+import com.dseu.admission.dto.*;
 import com.dseu.admission.entity.OtpVerification;
 import com.dseu.admission.entity.User;
 import com.dseu.admission.repository.OtpRepository;
 import com.dseu.admission.repository.UserRepository;
+import com.dseu.admission.service.AuthService;
 import com.dseu.admission.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -22,10 +22,20 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final OtpRepository otpRepository;
+    private final AuthService authService;
     private final UserRepository userRepository;
+    private final OtpRepository otpRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+
+    // ===============================
+    // REGISTER
+    // ===============================
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        authService.register(request);
+        return ResponseEntity.ok("Registration successful. OTP sent.");
+    }
 
     // ===============================
     // VERIFY OTP
@@ -47,7 +57,7 @@ public class AuthController {
         user.setEmailVerified(true);
         userRepository.save(user);
 
-        otpRepository.delete(otp);
+        otpRepository.deleteByEmail(request.getEmail());
 
         return ResponseEntity.ok("Email verified successfully");
     }
@@ -71,12 +81,28 @@ public class AuthController {
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
 
-        return ResponseEntity.ok(
-                Map.of(
-                        "token", token,
-                        "role", user.getRole(),
-                        "email", user.getEmail()
-                )
-        );
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "role", user.getRole(),
+                "email", user.getEmail()
+        ));
+    }
+
+    // ===============================
+    // FORGOT PASSWORD
+    // ===============================
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        authService.sendOtp(request.getEmail());
+        return ResponseEntity.ok("OTP sent to email");
+    }
+
+    // ===============================
+    // RESET PASSWORD
+    // ===============================
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request);
+        return ResponseEntity.ok("Password reset successfully");
     }
 }
