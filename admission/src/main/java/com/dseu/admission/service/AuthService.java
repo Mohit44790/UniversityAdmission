@@ -43,7 +43,7 @@ public class AuthService {
         otpEntity.setOtp(otp);
         otpEntity.setExpiryTime(LocalDateTime.now().plusMinutes(10));
 
-        otpRepository.save(otpEntity);
+        OtpRepository.save(otpEntity);
 
         emailService.sendOtp(request.getEmail(),otp);
     }
