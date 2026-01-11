@@ -24,4 +24,10 @@ public class OtpVerification {
 
     @Column(nullable = false)
     private LocalDateTime expiryTime;
+
+    
+    private int attempts; // wrong attempts count
+
+    private LocalDateTime blockedUntil; // block resend / verify
 }
+

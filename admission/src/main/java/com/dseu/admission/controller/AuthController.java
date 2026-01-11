@@ -42,25 +42,18 @@ public class AuthController {
     // ===============================
     @PostMapping("/verify-otp")
     public ResponseEntity<?> verifyOtp(@RequestBody OtpVerifyRequest request) {
-
-        OtpVerification otp = otpRepository
-                .findByEmailAndOtp(request.getEmail(), request.getOtp())
-                .orElseThrow(() -> new RuntimeException("Invalid OTP"));
-
-        if (otp.getExpiryTime().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("OTP expired");
-        }
-
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setEmailVerified(true);
-        userRepository.save(user);
-
-        otpRepository.deleteByEmail(request.getEmail());
-
+        authService.verifyOtp(request);
         return ResponseEntity.ok("Email verified successfully");
     }
+
+
+    @PostMapping("/resend-otp")
+    public ResponseEntity<?> resendOtp(@RequestBody ResendOtpRequest request) {
+        authService.resendOtp(request.getEmail());
+        return ResponseEntity.ok("OTP resent successfully");
+    }
+
+
 
     // ===============================
     // LOGIN
