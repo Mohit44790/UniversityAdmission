@@ -33,7 +33,9 @@ public class SecurityConfig {
                                 "/api/auth/verify-otp",
                                 "/api/auth/resend-otp",
                                 "/api/auth/forgot-password",
-                                "/api/auth/reset-password"
+                                "/api/auth/reset-password",
+                                "/api/student/profile",
+                                "/api/student/uploads"
                         ).permitAll()
                         // All other endpoints require authentication
                         .anyRequest().authenticated()
