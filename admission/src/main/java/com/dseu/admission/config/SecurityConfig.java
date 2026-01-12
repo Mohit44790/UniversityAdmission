@@ -1,5 +1,6 @@
 package com.dseu.admission.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,6 +9,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -16,32 +18,38 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // No sessions
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
+                        // PUBLIC
                         .requestMatchers(
-                                "/api/auth/register",
-                                "/api/auth/login",
-                                "/api/auth/verify-otp",
-                                "/api/auth/resend-otp",
-                                "/api/auth/forgot-password",
-                                "/api/auth/reset-password",
-                                "/api/student/profile",
-                                "/api/student/uploads"
+                                "/api/auth/**",
+                                "/error"
                         ).permitAll()
-                        // All other endpoints require authentication
-                        .anyRequest().authenticated()
-                );
 
-        // Remove httpBasic(), as we don't need basic auth for JWT/stateless APIs
+                        // PROTECTED
+                        .requestMatchers("/api/student/**").authenticated()
+
+                        // BLOCK EVERYTHING ELSE
+                        .anyRequest().denyAll()
+                )
+                // REGISTER JWT FILTER
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }
@@ -52,31 +60,27 @@ public class SecurityConfig {
     }
 
     // ===============================
-    // CORS Configuration
+    // CORS CONFIG
     // ===============================
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
 
-        // Allowed origins (frontend dev servers)
-        configuration.setAllowedOriginPatterns(List.of(
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOriginPatterns(List.of(
                 "http://localhost:5173",
                 "http://localhost:3000",
-                "http://localhost:4200"
+                "http://localhost:4200",
+                "https://admission.mycollege.in"
         ));
 
-        // Allowed HTTP methods
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
 
-        // Allow any headers
-        configuration.setAllowedHeaders(List.of("*"));
-
-        // Allow credentials (cookies, Authorization header)
-        configuration.setAllowCredentials(true);
-
-        // Register CORS config for all paths
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
 
         return source;
     }
