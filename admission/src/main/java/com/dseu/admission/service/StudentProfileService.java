@@ -13,7 +13,6 @@ public class StudentProfileService {
     private final StudentProfileRepository repository;
 
     public void saveOrUpdateProfile(String userId, StudentProfileRequest req) {
-
         StudentProfile profile =
                 repository.findById(userId).orElse(new StudentProfile());
 
@@ -64,6 +63,23 @@ public class StudentProfileService {
         profile.setMedicalCondition(req.getMedicalCondition());
         profile.setAbcId(req.getAbcId());
         profile.setUniversityEmployeeWard(req.getUniversityEmployeeWard());
+
+        repository.save(profile);
+    }
+
+    // ✅ NEW METHOD
+    public void updateDocumentPaths(
+            String userId,
+            String photoPath,
+            String signaturePath,
+            String abcPath) {
+
+        StudentProfile profile = repository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        profile.setPhotoPath(photoPath);
+        profile.setSignaturePath(signaturePath);
+        profile.setAbcDocumentPath(abcPath);
 
         repository.save(profile);
     }

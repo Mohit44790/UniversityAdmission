@@ -4,17 +4,15 @@ import com.dseu.admission.dto.StudentProfileRequest;
 import com.dseu.admission.entity.StudentProfile;
 import com.dseu.admission.service.StudentProfileService;
 import com.dseu.admission.util.JwtUtil;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
@@ -58,7 +56,7 @@ public class StudentProfileController {
     }
 
     // ===============================
-    // FILE UPLOADS
+    // FILE UPLOADS (FIXED)
     // ===============================
     @PostMapping(value = "/uploads", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadFiles(
@@ -68,14 +66,39 @@ public class StudentProfileController {
             @RequestParam MultipartFile abcFile) throws Exception {
 
         String token = auth.substring(7);
-        String userId = jwtUtil.extractEmail(token);
 
-        Files.createDirectories(Paths.get(uploadDir + "/" + userId));
+        // 🔐 Sanitize email for folder name
+        String email = jwtUtil.extractEmail(token);
+        String safeUserId = email.replace("@", "_").replace(".", "_");
 
-        photo.transferTo(new File(uploadDir + "/" + userId + "/photo.jpg"));
-        signature.transferTo(new File(uploadDir + "/" + userId + "/signature.jpg"));
-        abcFile.transferTo(new File(uploadDir + "/" + userId + "/abc.pdf"));
+        // 📂 Resolve absolute upload path
+        Path baseUploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Path userDir = baseUploadPath.resolve(safeUserId);
 
-        return ResponseEntity.ok(Map.of("message", "Files uploaded successfully"));
+        // ✅ Create directories if not exist
+        Files.createDirectories(userDir);
+
+        // 📁 File paths
+        Path photoPath = userDir.resolve("photo.jpg");
+        Path signPath = userDir.resolve("signature.jpg");
+        Path abcPath = userDir.resolve("abc.pdf");
+
+        // 💾 Save files
+        photo.transferTo(photoPath.toFile());
+        signature.transferTo(signPath.toFile());
+        abcFile.transferTo(abcPath.toFile());
+
+        // (OPTIONAL) Save paths in DB
+        service.updateDocumentPaths(
+                email,
+                photoPath.toString(),
+                signPath.toString(),
+                abcPath.toString()
+        );
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Files uploaded successfully",
+                "directory", userDir.toString()
+        ));
     }
 }
