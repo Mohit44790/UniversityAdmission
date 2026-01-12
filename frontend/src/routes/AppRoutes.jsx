@@ -13,8 +13,8 @@ const AppRoutes = () => {
     <Suspense fallback={<Loader />}>
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Signup />} />
 
         {/* Protected / Layout routes */}
         <Route element={<Layouts />}>
