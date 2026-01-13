@@ -1,6 +1,6 @@
 package com.dseu.admission.controller;
 
-import com.dseu.admission.dto.StudentProfileRequest;
+import com.dseu.admission.dto.*;
 import com.dseu.admission.entity.StudentProfile;
 import com.dseu.admission.service.StudentProfileService;
 import com.dseu.admission.util.JwtUtil;
@@ -24,35 +24,62 @@ public class StudentProfileController {
     private final StudentProfileService service;
     private final JwtUtil jwtUtil;
 
+    private String getUserId(String auth) {
+        return jwtUtil.extractEmail(auth.substring(7));
+    }
+
     @Value("${file.upload-dir}")
     private String uploadDir;
 
     // ===============================
-    // SAVE / UPDATE PROFILE
-    // ===============================
-    @PostMapping("/profile")
-    public ResponseEntity<?> saveProfile(
+
+
+    // ================= BASIC =================
+    @PostMapping("/profile/basic")
+    public ResponseEntity<?> saveBasic(
             @RequestHeader("Authorization") String auth,
-            @RequestBody StudentProfileRequest request) {
+            @RequestBody BasicDetailsRequest req) {
 
-        String token = auth.substring(7);
-        String userId = jwtUtil.extractEmail(token);
-
-        service.saveOrUpdateProfile(userId, request);
-        return ResponseEntity.ok(Map.of("message", "Profile saved successfully"));
+        service.saveBasic(getUserId(auth), req);
+        return ResponseEntity.ok(Map.of("message", "Basic details saved"));
     }
 
-    // ===============================
-    // GET PROFILE
-    // ===============================
+    // ================= FAMILY =================
+    @PostMapping("/profile/family")
+    public ResponseEntity<?> saveFamily(
+            @RequestHeader("Authorization") String auth,
+            @RequestBody FamilyDetailsRequest req) {
+
+        service.saveFamily(getUserId(auth), req);
+        return ResponseEntity.ok(Map.of("message", "Family details saved"));
+    }
+
+    // ================= BANK =================
+    @PostMapping("/profile/bank")
+    public ResponseEntity<?> saveBank(
+            @RequestHeader("Authorization") String auth,
+            @RequestBody BankDetailsRequest req) {
+
+        service.saveBank(getUserId(auth), req);
+        return ResponseEntity.ok(Map.of("message", "Bank details saved"));
+    }
+
+    // ================= OTHER =================
+    @PostMapping("/profile/other")
+    public ResponseEntity<?> saveOther(
+            @RequestHeader("Authorization") String auth,
+            @RequestBody OtherDetailsRequest req) {
+
+        service.saveOther(getUserId(auth), req);
+        return ResponseEntity.ok(Map.of("message", "Other details saved"));
+    }
+
+    // ================= GET FULL PROFILE =================
     @GetMapping("/profile")
     public ResponseEntity<StudentProfile> getProfile(
             @RequestHeader("Authorization") String auth) {
 
-        String token = auth.substring(7);
-        String userId = jwtUtil.extractEmail(token);
-
-        return ResponseEntity.ok(service.getProfile(userId));
+        return ResponseEntity.ok(service.getProfile(getUserId(auth)));
     }
 
     // ===============================
