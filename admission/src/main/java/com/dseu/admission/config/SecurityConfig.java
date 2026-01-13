@@ -33,19 +33,21 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // PUBLIC
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/error"
-                        ).permitAll()
 
-                        // PROTECTED
-                        .requestMatchers("/api/student/**").authenticated()
+                        // 🌍 PUBLIC
+                        .requestMatchers("/api/auth/**").permitAll()
 
-                        // BLOCK EVERYTHING ELSE
+                        // 🎓 STUDENT ONLY
+                        .requestMatchers("/api/student/**")
+                        .hasRole("STUDENT")
+
+                        // 🛡️ ADMIN ONLY
+                        .requestMatchers("/api/admin/**")
+                        .hasRole("ADMIN")
+
+                        // ❌ BLOCK EVERYTHING ELSE
                         .anyRequest().denyAll()
                 )
-                // REGISTER JWT FILTER
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
