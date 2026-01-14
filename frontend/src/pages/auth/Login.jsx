@@ -94,6 +94,12 @@ const Login = () => {
 
 
         </form>
+        <p
+  onClick={() => navigate("/forgot-password")}
+  className="text-right text-sm text-white cursor-pointer hover:underline"
+>
+  Forgot password?
+</p>
         <p className="text-center text-sm text-purple-400 font-bold mt-6">
   Don’t have an account?{" "}
   <span

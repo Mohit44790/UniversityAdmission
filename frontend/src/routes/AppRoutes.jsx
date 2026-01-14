@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Layouts from "../pages/Layouts";
 import OtpVerify from "../pages/auth/OtpVerify";
 import ResetPassword from "../pages/auth/ResetPassword";
+import ForgotPassword from "../pages/auth/ForgotPassword";
 
 const Login = lazy(() => import("../pages/auth/Login"));
 const Signup = lazy(() => import("../pages/auth/Signup"));
@@ -19,6 +20,8 @@ const AppRoutes = () => {
         <Route path="/" element={<Signup />} />
         <Route path="/verify-otp" element={<OtpVerify />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
 
         {/* Protected / Layout routes */}
         <Route element={<Layouts />}>
