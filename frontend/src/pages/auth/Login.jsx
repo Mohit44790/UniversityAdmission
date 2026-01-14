@@ -19,11 +19,18 @@ const Login = () => {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const res = await dispatch(loginUser(formData));
+  e.preventDefault();
 
-    navigate('/dashboard');
+  const res = await dispatch(loginUser(formData));
+
+  if (res.meta.requestStatus === "fulfilled") {
+    toast.success("Login successful");
+    navigate("/dashboard");
+  } else {
+    toast.error(res.payload || "Login failed");
   }
+};
+
   return (
      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#C7C5F4] via-[#9F9BD8] to-[#776BCC]">
       <div className="relative w-125 h-[580px] bg-linear-to-br from-[#5D54A4] to-[#7C78B8] shadow-[0_20px_60px_rgba(0,0,0,0.35)] overflow-hidden rounded-3xl">

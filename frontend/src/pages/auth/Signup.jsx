@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../../redux/slices/authSlice';
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -20,13 +21,28 @@ const Signup = () => {
     setFormData({...formData, [e.target.name]: e.target.value});
   }
 
-  const handleSubmit = async (e) =>{
-    e.preventDefault();
-    const res = await dispatch(registerUser(formData));
-    if(res.success){
-      navigate("/login");
-    }
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (formData.password !== formData.confirmPassword) {
+    toast.error("Passwords do not match");
+    return;
   }
+
+  const res = await dispatch(registerUser(formData));
+
+  if (res.meta.requestStatus === "fulfilled") {
+    toast.success("Signup successful! OTP sent to email");
+
+    navigate("/verify-otp", {
+      state: { email: formData.email },
+    });
+  } else {
+    toast.error(res.payload || "Signup failed");
+  }
+};
+
   return (
      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#C7C5F4] via-[#9F9BD8] to-[#776BCC]">
       <div className="relative w-[500px] h-[580px] bg-linear-to-br from-[#5D54A4] to-[#7C78B8] shadow-[0_20px_60px_rgba(0,0,0,0.35)] overflow-hidden rounded-3xl">

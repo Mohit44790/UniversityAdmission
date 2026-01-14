@@ -34,27 +34,36 @@ const dispatch = useDispatch();
   };
 
    const handleSubmit = async (e) => {
-    e.preventDefault();
-     const otpValue = otp.join("");
+  e.preventDefault();
 
-    if (otpValue.length !== 6) {
-      toast.error("Please enter 6 digit OTP");
-      return;
-    }
-        const res = await dispatch(verifyOtp({ email, otp: otpValue }));
-         setTimeout(() => {
+  const otpValue = otp.join("");
+  if (otpValue.length !== 6) {
+    toast.error("Please enter 6 digit OTP");
+    return;
+  }
+
+  const res = await dispatch(verifyOtp({ email, otp: otpValue }));
+
+  if (res.meta.requestStatus === "fulfilled") {
+    toast.success("OTP verified successfully");
+
+    setTimeout(() => {
       navigate("/login");
-    }, 1500);
-   }
+    }, 1200);
+  } else {
+    toast.error(res.payload || "Invalid OTP");
+  }
+};
+
   return (
-     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#C7C5F4] via-[#9F9BD8] to-[#776BCC]">
-      <div className="relative w-[480px] h-[390px] bg-gradient-to-br from-[#5D54A4] to-[#7C78B8] shadow-[0_20px_60px_rgba(0,0,0,0.35)] overflow-hidden rounded-3xl">
+     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#C7C5F4] via-[#9F9BD8] to-[#776BCC]">
+      <div className="relative w-1/3 h-96 bg-linear-to-br from-[#5D54A4] to-[#7C78B8] shadow-[0_20px_60px_rgba(0,0,0,0.35)] overflow-hidden rounded-3xl">
 
         {/* Background Shapes */}
-        <span className="absolute w-[520px] h-[520px] bg-white/90 top-[-60px] right-[120px] rotate-45 rounded-tr-[72px]" />
-        <span className="absolute w-[220px] h-[220px] bg-[#6C63AC] top-[-180px] right-[-40px] rotate-45 rounded-3xl" />
-        <span className="absolute w-[200px] h-[560px] bg-gradient-to-t from-[#5D54A4] to-[#6A679E] top-[-20px] right-[-20px] rotate-45 rounded-3xl" />
-        <span className="absolute w-[220px] h-[420px] bg-[#7E7BB9] top-[420px] right-[40px] rotate-45 rounded-[80px]" />
+        <span className="absolute w-1/1 h-96 bg-white/90 -top-18 right-28 rotate-45 rounded-tr-[72px]" />
+        <span className="absolute w-1/2 h-56 bg-[#6C63AC] top-20 right-1 rotate-45 rounded-3xl" />
+        <span className="absolute w-2/6 h-3/2 bg-linear-to-t from-[#5D54A4] to-[#6A679E] top-16 right-4 rotate-45 rounded-3xl" />
+        <span className="absolute w-1/4 h-96 bg-[#7E7BB9] top-62 right-8 rotate-45 rounded-[80px]" />
 
         {/* Content */}
         <div className="relative z-10 h-full flex flex-col justify-center px-10">
