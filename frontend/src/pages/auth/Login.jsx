@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../redux/slices/authSlice';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -26,9 +27,7 @@ const Login = () => {
   if (res.meta.requestStatus === "fulfilled") {
     toast.success("Login successful");
     navigate("/dashboard");
-  } else {
-    toast.error(res.payload || "Login failed");
-  }
+  } 
 };
 
   return (

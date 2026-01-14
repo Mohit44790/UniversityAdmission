@@ -38,9 +38,7 @@ const handleSubmit = async (e) => {
     navigate("/verify-otp", {
       state: { email: formData.email },
     });
-  } else {
-    toast.error(res.payload || "Signup failed");
-  }
+  } 
 };
 
   return (
