@@ -27,6 +27,7 @@ export const loginUser = createAsyncThunk(
       const response = await api.post("/api/auth/login", credentials);
       const { token, ...user } = response.data;
       setSessionData("token", token);
+      setSessionData("user", user);
       return { token, user };
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || "Login failed");
