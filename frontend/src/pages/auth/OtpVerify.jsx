@@ -107,8 +107,8 @@ const OtpVerify = () => {
         "
       >
         {/* Decorative Shapes (hidden on mobile) */}
-        <span className="absolute w-64 h-72 bg-white/80 -top-20 -right-20 rotate-45 rounded-3xl hidden sm:block" />
-        <span className="absolute w-48 h-48 bg-[#6C63AC] top-28 -right-12 rotate-45 rounded-3xl hidden sm:block" />
+        <span className="absolute w-80 h-80 bg-white/80 -top-20 -right-20 rotate-45 rounded-3xl hidden sm:block" />
+        <span className="absolute w-48 h-44 bg-[#6C63AC] top-28 -right-12 rotate-45 rounded-3xl hidden sm:block" />
         <span className="absolute w-36 h-36 bg-linear-to-t from-[#5D54A4] to-[#6A679E] top-44 right-8 rotate-45 rounded-3xl hidden md:block" />
 
         {/* Content */}
