@@ -1,14 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { getSessionData } from "../utils/helpers";
+import { useSelector } from "react-redux";
 
 const ProtectedRoute = () => {
-  const token = getSessionData("token"); 
-
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <Outlet />;
+  const token = useSelector((state) => state.auth.token);
+  return token ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;
