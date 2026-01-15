@@ -51,7 +51,7 @@ export const verifyOtp = createAsyncThunk(
 // Resend OTP
 export const resendOtp = createAsyncThunk(
   "auth/resendOtp",
-  async (email, { rejectWithValue }) => {
+  async ({ email }, { rejectWithValue }) => {
     try {
       const response = await api.post("/api/auth/resend-otp", { email });
       return response.data;
