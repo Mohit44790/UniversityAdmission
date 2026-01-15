@@ -15,6 +15,19 @@ export const saveBasicDetails = createAsyncThunk(
   }
 );
 
+// 2️⃣ Save Family Details
+export const saveFamilyDetails = createAsyncThunk(
+  "profile/saveFamily",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await api.post("/api/student/profile/family", payload);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
 
 const profileSlice = createSlice({
     name: "profile",
