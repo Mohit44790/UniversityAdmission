@@ -104,6 +104,7 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       removeSessionData("token");
+      removeSessionData("user");
     },
     clearError: (state) => {
       state.error = null;

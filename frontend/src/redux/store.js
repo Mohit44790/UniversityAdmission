@@ -1,16 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./rootReducer";
-import {
-  persistReducer,
-  persistStore,
-} from "redux-persist";
-import storage from "redux-persist/lib/storage"; // localStorage
+import { persistReducer, persistStore } from "redux-persist";
+import storageSession from "redux-persist/lib/storage/session"; // sessionStorage
 
-/* Persist config */
 const persistConfig = {
   key: "root",
-  storage,
-  whitelist: ["auth"], // ONLY persist auth slice
+  storage: storageSession,
+  whitelist: ["auth"], // only auth saved in sessionStorage
 };
 
 const persistedReducer = persistReducer(

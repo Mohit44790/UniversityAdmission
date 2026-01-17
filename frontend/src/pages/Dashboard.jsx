@@ -1,13 +1,15 @@
-import { useSelector } from "react-redux";
+
+import Profile from "./profileComplete/Profile";
 
 const Dashboard = () => {
-  const user = useSelector((state) => state.auth.user);
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <h1 className="text-3xl font-bold">
-        Welcome, {user?.email || "User"} 👋
-      </h1>
+      
+        <Profile/>
+        
+      
     </div>
   );
 };
