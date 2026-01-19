@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchStudentProfile } from "../redux/slices/profileSlice";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
   const user = useSelector((state) => state.auth.user);
   const profile = useSelector((state) => state.profile.profile);
@@ -38,10 +40,10 @@ const Dashboard = () => {
         )}
 
         <div className="gap-2 flex mt-3">
-          <button className="px-8 border rounded-md py-2 bg-green-500 text-white">
+          <button onClick={()=> navigate("/profile")} className="px-8 border cursor-pointer rounded-md py-2 bg-green-500 text-white">
             Profile
           </button>
-          <button className="px-8 border rounded-md py-2 bg-blue-500 text-white">
+          <button onClick={()=> navigate("/edit-profile")} className="px-8 border rounded-md py-2 bg-blue-500 text-white">
             Edit Profile
           </button>
         </div>

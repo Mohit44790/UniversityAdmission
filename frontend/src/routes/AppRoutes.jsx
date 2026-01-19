@@ -4,6 +4,8 @@ import ProtectedRoute from "./ProtectedRoute";
 import OtpVerify from "../pages/auth/OtpVerify";
 import ResetPassword from "../pages/auth/ResetPassword";
 import ForgotPassword from "../pages/auth/ForgotPassword";
+import Profile from "../pages/profileComplete/Profile";
+import EditProfile from "../pages/profileComplete/EditProfile";
 
 const Login = lazy(() => import("../pages/auth/Login"));
 const Signup = lazy(() => import("../pages/auth/Signup"));
@@ -27,6 +29,8 @@ const AppRoutes = () => {
         <Route element={<ProtectedRoute />}>
           <Route element={<Layouts />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/edit-profile" element={<EditProfile />} />
           </Route>
         </Route>
       </Routes>
