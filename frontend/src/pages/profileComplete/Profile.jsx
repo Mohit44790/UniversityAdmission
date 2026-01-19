@@ -22,6 +22,22 @@ const Profile = () => {
     );
   }
 
+  if(error){
+    return(
+      <div className="p-6 text-center text-red-600">
+        Failed to load profile
+      </div>
+    )
+  }
+
+  if (!profile) {
+    return (
+      <div className="p-6 text-center text-gray-500">
+        No profile data available
+      </div>
+    );
+  }
+
 
   return (
     <div>
