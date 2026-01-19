@@ -11,7 +11,7 @@ import {
    ============================ */
 
 // 1️⃣ Save Basic Details
-export const saveBasicDetails = createAsyncThunk(
+export const profileBasicDetails = createAsyncThunk(
   "profile/saveBasic",
   async (payload, { rejectWithValue }) => {
     try {
@@ -120,14 +120,14 @@ const profileSlice = createSlice({
     builder
 
       // 🔹 Save Basic
-      .addCase(saveBasicDetails.pending, (state) => {
+      .addCase(profileBasicDetails.pending, (state) => {
         state.loading = true;
       })
-      .addCase(saveBasicDetails.fulfilled, (state, action) => {
+      .addCase(profileBasicDetails.fulfilled, (state, action) => {
         state.loading = false;
         state.successMessage = action.payload.message;
       })
-      .addCase(saveBasicDetails.rejected, (state, action) => {
+      .addCase(profileBasicDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -189,9 +189,11 @@ const profileSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchStudentProfile.fulfilled, (state, action) => {
-        state.loading = false;
-        state.profile = action.payload;
-      })
+  state.loading = false;
+  state.profile = action.payload;
+  setSessionData("studentProfile", action.payload);
+})
+
       .addCase(fetchStudentProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
