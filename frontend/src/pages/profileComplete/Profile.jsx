@@ -40,8 +40,23 @@ const Profile = () => {
 
 
   return (
-    <div>
-          profile complete page
+   <div className="max-w-4xl mx-auto p-6">
+      <div className="bg-white shadow rounded-lg border">
+         {/* Header */}
+        <div className="px-6 py-4 border-b bg-gray-50">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Profile Details
+          </h2>
+          <p className="text-sm text-gray-500">
+            Your basic personal information
+          </p>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+          
+        </div>
+      </div>
     </div>
     
   );
