@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import { toast } from "react-toastify";
 import { profileBasicDetails } from "../../redux/slices/profileSlice";
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const { profile,loading } = useSelector((state) => state.profile);
+  const { profile, loading } = useSelector((state) => state.profile);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -28,23 +27,49 @@ const Profile = () => {
     yearOfRegistration: "",
   });
 
-  /* ---------------- HANDLE CHANGE ---------------- */
+  /* ================= PREFILL FORM ================= */
+
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        ...profile,
+
+        // 🔹 Ensure calendar-compatible date
+        dateOfBirth: profile.dateOfBirth
+          ? profile.dateOfBirth.slice(0, 10)
+          : "",
+
+        // 🔹 Handle nullable fields safely
+        enrollmentNumber: profile.enrollmentNumber || "",
+        yearOfRegistration: profile.yearOfRegistration || "",
+      });
+    }
+  }, [profile]);
+
+  /* ================= HANDLE CHANGE ================= */
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: type === "checkbox" ? checked : value,
-    });
+    }));
   };
 
-  /* ---------------- SUBMIT ---------------- */
+  /* ================= SUBMIT ================= */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await dispatch(profileBasicDetails(formData));
+    const payload = {
+      ...formData,
+      enrollmentNumber: formData.enrolledBefore
+        ? formData.enrollmentNumber
+        : null,
+    };
+
+    const res = await dispatch(profileBasicDetails(payload));
 
     if (res.meta.requestStatus === "fulfilled") {
       toast.success("Profile saved successfully");
@@ -53,7 +78,7 @@ const Profile = () => {
     }
   };
 
-  /* ---------------- UI ---------------- */
+  /* ================= UI ================= */
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -65,22 +90,23 @@ const Profile = () => {
 
         {/* ================= BASIC DETAILS ================= */}
         <section className="bg-white p-6 rounded-xl shadow">
-          <h2 className="text-xl font-semibold mb-6">
-            Basic Details
-          </h2>
+          <h2 className="text-xl font-semibold mb-6">Basic Details</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <input
               name="fullName"
-              placeholder="Full Name"
+              value={formData.fullName}
               onChange={handleChange}
               className="input"
+              placeholder="Full Name"
               required
             />
 
+            {/* ✅ DATE PICKER FIXED */}
             <input
               type="date"
               name="dateOfBirth"
+              value={formData.dateOfBirth}
               onChange={handleChange}
               className="input"
               required
@@ -89,14 +115,16 @@ const Profile = () => {
             <input
               type="number"
               name="ageAsOnJuly1_2024"
-              placeholder="Age as on 1 July 2024"
+              value={formData.ageAsOnJuly1_2024}
               onChange={handleChange}
               className="input"
+              placeholder="Age as on 1 July 2024"
               required
             />
 
             <select
               name="gender"
+              value={formData.gender}
               onChange={handleChange}
               className="input"
               required
@@ -109,6 +137,7 @@ const Profile = () => {
 
             <select
               name="category"
+              value={formData.category}
               onChange={handleChange}
               className="input"
               required
@@ -122,62 +151,64 @@ const Profile = () => {
 
             <input
               name="religion"
-              placeholder="Religion"
+              value={formData.religion}
               onChange={handleChange}
               className="input"
+              placeholder="Religion"
             />
 
             <input
               name="nationality"
-              placeholder="Nationality"
+              value={formData.nationality}
               onChange={handleChange}
               className="input"
+              placeholder="Nationality"
             />
           </div>
         </section>
 
         {/* ================= CONTACT DETAILS ================= */}
         <section className="bg-white p-6 rounded-xl shadow">
-          <h2 className="text-xl font-semibold mb-6">
-            Contact Details
-          </h2>
+          <h2 className="text-xl font-semibold mb-6">Contact Details</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <input
               name="alternateEmail"
-              placeholder="Alternate Email"
+              value={formData.alternateEmail}
               onChange={handleChange}
               className="input"
+              placeholder="Alternate Email"
             />
 
             <input
               name="alternateMobile"
-              placeholder="Alternate Mobile"
+              value={formData.alternateMobile}
               onChange={handleChange}
               className="input"
+              placeholder="Alternate Mobile"
             />
 
             <textarea
               name="permanentAddress"
-              placeholder="Permanent Address"
+              value={formData.permanentAddress}
               onChange={handleChange}
               className="input md:col-span-2"
+              placeholder="Permanent Address"
             />
 
             <textarea
               name="correspondenceAddress"
-              placeholder="Correspondence Address"
+              value={formData.correspondenceAddress}
               onChange={handleChange}
               className="input md:col-span-2"
+              placeholder="Correspondence Address"
             />
           </div>
         </section>
 
         {/* ================= ACADEMIC DETAILS ================= */}
         <section className="bg-white p-6 rounded-xl shadow">
-          <h2 className="text-xl font-semibold mb-6">
-            Academic Details
-          </h2>
+          <h2 className="text-xl font-semibold mb-6">Academic Details</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <label className="flex items-center gap-3">
@@ -193,25 +224,28 @@ const Profile = () => {
             {formData.enrolledBefore && (
               <input
                 name="enrollmentNumber"
-                placeholder="Previous Enrollment Number"
+                value={formData.enrollmentNumber}
                 onChange={handleChange}
                 className="input"
+                placeholder="Previous Enrollment Number"
               />
             )}
 
             <input
               name="programmeRegistered"
-              placeholder="Programme Registered"
+              value={formData.programmeRegistered}
               onChange={handleChange}
               className="input"
+              placeholder="Programme Registered"
             />
 
             <input
               type="number"
               name="yearOfRegistration"
-              placeholder="Year of Registration"
+              value={formData.yearOfRegistration}
               onChange={handleChange}
               className="input"
+              placeholder="Year of Registration"
             />
           </div>
         </section>

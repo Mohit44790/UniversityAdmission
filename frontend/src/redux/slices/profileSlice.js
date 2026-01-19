@@ -1,268 +1,213 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { profileBasicDetails } from "../../redux/slices/profileSlice";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../config/api";
+import {
+  setSessionData,
+  getSessionData,
+  removeSessionData
+} from "../../utils/helpers";
 
-const Profile = () => {
-  const dispatch = useDispatch();
-  const { profile, loading } = useSelector((state) => state.profile);
+/* ============================
+   ASYNC THUNKS (API CALLS)
+   ============================ */
 
-  const [formData, setFormData] = useState({
-    fullName: "",
-    dateOfBirth: "",
-    ageAsOnJuly1_2024: "",
-    gender: "",
-    category: "",
-    religion: "",
-    nationality: "",
+// 1️⃣ Save Basic Details
+export const profileBasicDetails = createAsyncThunk(
+  "profile/saveBasic",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await api.post("/api/student/profile/basic", payload);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
 
-    alternateEmail: "",
-    alternateMobile: "",
-    permanentAddress: "",
-    correspondenceAddress: "",
+// 2️⃣ Save Family Details
+export const saveFamilyDetails = createAsyncThunk(
+  "profile/saveFamily",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await api.post("/api/student/profile/family", payload);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
 
-    enrolledBefore: false,
-    enrollmentNumber: "",
-    programmeRegistered: "",
-    yearOfRegistration: "",
-  });
+// 3️⃣ Save Bank Details
+export const saveBankDetails = createAsyncThunk(
+  "profile/saveBank",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await api.post("/api/student/profile/bank", payload);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
 
-  /* ================= PREFILL FORM ================= */
+// 4️⃣ Save Other Details
+export const saveOtherDetails = createAsyncThunk(
+  "profile/saveOther",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await api.post("/api/student/profile/other", payload);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
 
-  useEffect(() => {
-    if (profile) {
-      setFormData({
-        ...profile,
-
-        // 🔹 Ensure calendar-compatible date
-        dateOfBirth: profile.dateOfBirth
-          ? profile.dateOfBirth.slice(0, 10)
-          : "",
-
-        // 🔹 Handle nullable fields safely
-        enrollmentNumber: profile.enrollmentNumber || "",
-        yearOfRegistration: profile.yearOfRegistration || "",
+// 5️⃣ Upload Documents
+export const uploadDocuments = createAsyncThunk(
+  "profile/uploadDocuments",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const res = await api.post("/api/student/uploads", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
       });
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
     }
-  }, [profile]);
+  }
+);
 
-  /* ================= HANDLE CHANGE ================= */
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  /* ================= SUBMIT ================= */
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const payload = {
-      ...formData,
-      enrollmentNumber: formData.enrolledBefore
-        ? formData.enrollmentNumber
-        : null,
-    };
-
-    const res = await dispatch(profileBasicDetails(payload));
-
-    if (res.meta.requestStatus === "fulfilled") {
-      toast.success("Profile saved successfully");
-    } else {
-      toast.error(res.payload || "Failed to save profile");
+// 6️⃣ Get Full Profile
+export const fetchStudentProfile = createAsyncThunk(
+  "profile/fetchProfile",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await api.get("/api/student/profile");
+      setSessionData("studentProfile", res.data);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
     }
-  };
+  }
+);
 
-  /* ================= UI ================= */
+/* ============================
+   SLICE
+   ============================ */
 
-  return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-[#4C489D]">
-        Student Profile
-      </h1>
+const profileSlice = createSlice({
+  name: "profile",
+  initialState: {
+    profile: getSessionData("studentProfile") || null,
+    loading: false,
+    error: null,
+    successMessage: null
+  },
+  reducers: {
+    clearProfileState: (state) => {
+      state.loading = false;
+      state.error = null;
+      state.successMessage = null;
+    },
+    logoutProfile: (state) => {
+      state.profile = null;
+      removeSessionData("studentProfile");
+    }
+  },
+  extraReducers: (builder) => {
+    builder
 
-      <form onSubmit={handleSubmit} className="space-y-10">
+      // 🔹 Save Basic
+      .addCase(profileBasicDetails.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(profileBasicDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(profileBasicDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
-        {/* ================= BASIC DETAILS ================= */}
-        <section className="bg-white p-6 rounded-xl shadow">
-          <h2 className="text-xl font-semibold mb-6">Basic Details</h2>
+      // 🔹 Save Family
+      .addCase(saveFamilyDetails.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(saveFamilyDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(saveFamilyDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <input
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              className="input"
-              placeholder="Full Name"
-              required
-            />
+      // 🔹 Save Bank
+      .addCase(saveBankDetails.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(saveBankDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(saveBankDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
-            {/* ✅ DATE PICKER FIXED */}
-            <input
-              type="date"
-              name="dateOfBirth"
-              value={formData.dateOfBirth}
-              onChange={handleChange}
-              className="input"
-              required
-            />
+      // 🔹 Save Other
+      .addCase(saveOtherDetails.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(saveOtherDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(saveOtherDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
-            <input
-              type="number"
-              name="ageAsOnJuly1_2024"
-              value={formData.ageAsOnJuly1_2024}
-              onChange={handleChange}
-              className="input"
-              placeholder="Age as on 1 July 2024"
-              required
-            />
+      // 🔹 Upload Documents
+      .addCase(uploadDocuments.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(uploadDocuments.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(uploadDocuments.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              className="input"
-              required
-            >
-              <option value="">Select Gender</option>
-              <option>Male</option>
-              <option>Female</option>
-              <option>Other</option>
-            </select>
+      // 🔹 Fetch Profile
+      .addCase(fetchStudentProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchStudentProfile.fulfilled, (state, action) => {
+  state.loading = false;
+  state.profile = action.payload;
+  setSessionData("studentProfile", action.payload);
+})
 
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="input"
-              required
-            >
-              <option value="">Select Category</option>
-              <option>General</option>
-              <option>OBC</option>
-              <option>SC</option>
-              <option>ST</option>
-            </select>
+      .addCase(fetchStudentProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  }
+});
 
-            <input
-              name="religion"
-              value={formData.religion}
-              onChange={handleChange}
-              className="input"
-              placeholder="Religion"
-            />
+/* ============================
+   EXPORTS
+   ============================ */
 
-            <input
-              name="nationality"
-              value={formData.nationality}
-              onChange={handleChange}
-              className="input"
-              placeholder="Nationality"
-            />
-          </div>
-        </section>
+export const {
+  clearProfileState,
+  logoutProfile
+} = profileSlice.actions;
 
-        {/* ================= CONTACT DETAILS ================= */}
-        <section className="bg-white p-6 rounded-xl shadow">
-          <h2 className="text-xl font-semibold mb-6">Contact Details</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <input
-              name="alternateEmail"
-              value={formData.alternateEmail}
-              onChange={handleChange}
-              className="input"
-              placeholder="Alternate Email"
-            />
-
-            <input
-              name="alternateMobile"
-              value={formData.alternateMobile}
-              onChange={handleChange}
-              className="input"
-              placeholder="Alternate Mobile"
-            />
-
-            <textarea
-              name="permanentAddress"
-              value={formData.permanentAddress}
-              onChange={handleChange}
-              className="input md:col-span-2"
-              placeholder="Permanent Address"
-            />
-
-            <textarea
-              name="correspondenceAddress"
-              value={formData.correspondenceAddress}
-              onChange={handleChange}
-              className="input md:col-span-2"
-              placeholder="Correspondence Address"
-            />
-          </div>
-        </section>
-
-        {/* ================= ACADEMIC DETAILS ================= */}
-        <section className="bg-white p-6 rounded-xl shadow">
-          <h2 className="text-xl font-semibold mb-6">Academic Details</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <label className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                name="enrolledBefore"
-                checked={formData.enrolledBefore}
-                onChange={handleChange}
-              />
-              Enrolled before?
-            </label>
-
-            {formData.enrolledBefore && (
-              <input
-                name="enrollmentNumber"
-                value={formData.enrollmentNumber}
-                onChange={handleChange}
-                className="input"
-                placeholder="Previous Enrollment Number"
-              />
-            )}
-
-            <input
-              name="programmeRegistered"
-              value={formData.programmeRegistered}
-              onChange={handleChange}
-              className="input"
-              placeholder="Programme Registered"
-            />
-
-            <input
-              type="number"
-              name="yearOfRegistration"
-              value={formData.yearOfRegistration}
-              onChange={handleChange}
-              className="input"
-              placeholder="Year of Registration"
-            />
-          </div>
-        </section>
-
-        {/* ================= SUBMIT ================= */}
-        <button
-          type="submit"
-          disabled={loading}
-          className={`w-full md:w-64 bg-[#4C489D] text-white py-3 rounded-full font-semibold transition
-            ${loading ? "opacity-60" : "hover:scale-105"}
-          `}
-        >
-          {loading ? "Saving..." : "Save Profile"}
-        </button>
-      </form>
-    </div>
-  );
-};
-
-export default Profile;
+export default profileSlice.reducer;
