@@ -61,35 +61,44 @@ const Profile = () => {
   };
 
   // ================= SUBMIT =================
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // Construct payload safely
-    const payload = {
-      ...formData,
-      enrollmentNumber: formData.enrolledBefore
-        ? formData.enrollmentNumber || null
-        : null,
-      yearOfRegistration: formData.yearOfRegistration
-        ? Number(formData.yearOfRegistration)
-        : null,
-      ageAsOnJuly1_2024: formData.ageAsOnJuly1_2024
-        ? Number(formData.ageAsOnJuly1_2024)
-        : null,
-    };
-
-    try {
-      const res = await dispatch(profileBasicDetails(payload));
-      if (res.meta.requestStatus === "fulfilled") {
-        toast.success("Profile saved successfully");
-      } else {
-        toast.error(res.payload || "Failed to save profile");
-      }
-    } catch (err) {
-      console.error("Profile save error:", err);
-      toast.error("Something went wrong while saving profile");
-    }
+  // Reformat date to DD-MM-YYYY
+  const formatDate = (dateStr) => {
+    if (!dateStr) return null;
+    const [year, month, day] = dateStr.split("-");
+    return `${day}-${month}-${year}`;
   };
+
+  // Construct payload exactly like backend expects
+  const payload = {
+    ...formData,
+    dateOfBirth: formatDate(formData.dateOfBirth),
+    ageAsOnJuly1_2024: formData.ageAsOnJuly1_2024
+      ? Number(formData.ageAsOnJuly1_2024)
+      : null,
+    yearOfRegistration: formData.yearOfRegistration
+      ? Number(formData.yearOfRegistration)
+      : null,
+    enrollmentNumber: formData.enrolledBefore
+      ? formData.enrollmentNumber || null
+      : null,
+  };
+
+  try {
+    const res = await dispatch(profileBasicDetails(payload));
+    if (res.meta.requestStatus === "fulfilled") {
+      toast.success("Profile saved successfully");
+    } else {
+      toast.error(res.payload || "Failed to save profile");
+    }
+  } catch (err) {
+    console.error("Profile save error:", err);
+    toast.error("Something went wrong while saving profile");
+  }
+};
+
 
   // ================= UI =================
   return (
