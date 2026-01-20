@@ -15,71 +15,83 @@ const Profile = () => {
     category: "",
     religion: "",
     nationality: "",
-
     alternateEmail: "",
     alternateMobile: "",
     permanentAddress: "",
     correspondenceAddress: "",
-
     enrolledBefore: false,
     enrollmentNumber: "",
     programmeRegistered: "",
     yearOfRegistration: "",
   });
 
-  /* ================= PREFILL FORM ================= */
-
+  // ================= PREFILL FORM =================
   useEffect(() => {
     if (profile) {
       setFormData({
-        ...profile,
-
-        // 🔹 Ensure calendar-compatible date
+        ...formData,
+        fullName: profile.fullName || "",
         dateOfBirth: profile.dateOfBirth
           ? profile.dateOfBirth.slice(0, 10)
           : "",
-
-        // 🔹 Handle nullable fields safely
+        ageAsOnJuly1_2024: profile.ageAsOnJuly1_2024 || "",
+        gender: profile.gender || "",
+        category: profile.category || "",
+        religion: profile.religion || "",
+        nationality: profile.nationality || "",
+        alternateEmail: profile.alternateEmail || "",
+        alternateMobile: profile.alternateMobile || "",
+        permanentAddress: profile.permanentAddress || "",
+        correspondenceAddress: profile.correspondenceAddress || "",
+        enrolledBefore: profile.enrolledBefore || false,
         enrollmentNumber: profile.enrollmentNumber || "",
+        programmeRegistered: profile.programmeRegistered || "",
         yearOfRegistration: profile.yearOfRegistration || "",
       });
     }
   }, [profile]);
 
-  /* ================= HANDLE CHANGE ================= */
-
+  // ================= HANDLE CHANGE =================
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  /* ================= SUBMIT ================= */
-
+  // ================= SUBMIT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Construct payload safely
     const payload = {
       ...formData,
       enrollmentNumber: formData.enrolledBefore
-        ? formData.enrollmentNumber
+        ? formData.enrollmentNumber || null
+        : null,
+      yearOfRegistration: formData.yearOfRegistration
+        ? Number(formData.yearOfRegistration)
+        : null,
+      ageAsOnJuly1_2024: formData.ageAsOnJuly1_2024
+        ? Number(formData.ageAsOnJuly1_2024)
         : null,
     };
 
-    const res = await dispatch(profileBasicDetails(payload));
-
-    if (res.meta.requestStatus === "fulfilled") {
-      toast.success("Profile saved successfully");
-    } else {
-      toast.error(res.payload || "Failed to save profile");
+    try {
+      const res = await dispatch(profileBasicDetails(payload));
+      if (res.meta.requestStatus === "fulfilled") {
+        toast.success("Profile saved successfully");
+      } else {
+        toast.error(res.payload || "Failed to save profile");
+      }
+    } catch (err) {
+      console.error("Profile save error:", err);
+      toast.error("Something went wrong while saving profile");
     }
   };
 
-  /* ================= UI ================= */
-
+  // ================= UI =================
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-[#4C489D]">
@@ -87,11 +99,9 @@ const Profile = () => {
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-10">
-
         {/* ================= BASIC DETAILS ================= */}
         <section className="bg-white p-6 rounded-xl shadow">
           <h2 className="text-xl font-semibold mb-6">Basic Details</h2>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <input
               name="fullName"
@@ -101,8 +111,6 @@ const Profile = () => {
               placeholder="Full Name"
               required
             />
-
-            {/* ✅ DATE PICKER FIXED */}
             <input
               type="date"
               name="dateOfBirth"
@@ -111,7 +119,6 @@ const Profile = () => {
               className="input"
               required
             />
-
             <input
               type="number"
               name="ageAsOnJuly1_2024"
@@ -121,7 +128,6 @@ const Profile = () => {
               placeholder="Age as on 1 July 2024"
               required
             />
-
             <select
               name="gender"
               value={formData.gender}
@@ -134,7 +140,6 @@ const Profile = () => {
               <option>Female</option>
               <option>Other</option>
             </select>
-
             <select
               name="category"
               value={formData.category}
@@ -148,7 +153,6 @@ const Profile = () => {
               <option>SC</option>
               <option>ST</option>
             </select>
-
             <input
               name="religion"
               value={formData.religion}
@@ -156,7 +160,6 @@ const Profile = () => {
               className="input"
               placeholder="Religion"
             />
-
             <input
               name="nationality"
               value={formData.nationality}
@@ -170,7 +173,6 @@ const Profile = () => {
         {/* ================= CONTACT DETAILS ================= */}
         <section className="bg-white p-6 rounded-xl shadow">
           <h2 className="text-xl font-semibold mb-6">Contact Details</h2>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <input
               name="alternateEmail"
@@ -179,7 +181,6 @@ const Profile = () => {
               className="input"
               placeholder="Alternate Email"
             />
-
             <input
               name="alternateMobile"
               value={formData.alternateMobile}
@@ -187,7 +188,6 @@ const Profile = () => {
               className="input"
               placeholder="Alternate Mobile"
             />
-
             <textarea
               name="permanentAddress"
               value={formData.permanentAddress}
@@ -195,7 +195,6 @@ const Profile = () => {
               className="input md:col-span-2"
               placeholder="Permanent Address"
             />
-
             <textarea
               name="correspondenceAddress"
               value={formData.correspondenceAddress}
@@ -209,7 +208,6 @@ const Profile = () => {
         {/* ================= ACADEMIC DETAILS ================= */}
         <section className="bg-white p-6 rounded-xl shadow">
           <h2 className="text-xl font-semibold mb-6">Academic Details</h2>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <label className="flex items-center gap-3">
               <input
@@ -228,6 +226,7 @@ const Profile = () => {
                 onChange={handleChange}
                 className="input"
                 placeholder="Previous Enrollment Number"
+                required
               />
             )}
 
@@ -238,7 +237,6 @@ const Profile = () => {
               className="input"
               placeholder="Programme Registered"
             />
-
             <input
               type="number"
               name="yearOfRegistration"
@@ -250,13 +248,11 @@ const Profile = () => {
           </div>
         </section>
 
-        {/* ================= SUBMIT ================= */}
         <button
           type="submit"
           disabled={loading}
           className={`w-full md:w-64 bg-[#4C489D] text-white py-3 rounded-full font-semibold transition
-            ${loading ? "opacity-60" : "hover:scale-105"}
-          `}
+            ${loading ? "opacity-60" : "hover:scale-105"}`}
         >
           {loading ? "Saving..." : "Save Profile"}
         </button>
