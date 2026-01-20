@@ -1,62 +1,48 @@
 import axios from "axios";
 import { toast } from "react-toastify";
+import { getSessionData, removeSessionData } from "../../utils/helpers";
 
-
-// ===============================
-// Base Axios instance
-// ===============================
 const api = axios.create({
   baseURL: "http://localhost:8080",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 10000, // 10s timeout for slow networks
+  timeout: 10000,
 });
 
 // ===============================
 // Request Interceptor
-// Add JWT token if available
 // ===============================
 api.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem("token") || localStorage.getItem("token");
+    const token = getSessionData("token"); // ✅ ONLY this
+
     if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
-  (error) => {
-    toast.error("Request error! Please try again.");
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // ===============================
 // Response Interceptor
-// Global error handling with toast
 // ===============================
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      const status = error.response.status;
-      const message =
-        error.response.data?.message ||
-        error.response.data?.error ||
-        "Something went wrong!";
+      const { status, data } = error.response;
 
       if (status === 401) {
-        toast.error("Unauthorized! Please login again.");
-        console.error("Unauthorized! Redirect to login.");
+        toast.error("Session expired. Please login again.");
+        removeSessionData("token");
+        removeSessionData("user");
       } else if (status === 403) {
-        toast.error("Forbidden! You don't have permission.");
-        console.error("Forbidden! No permission.");
+        toast.error("Access denied.");
       } else {
-        toast.error(message);
+        toast.error(data?.message || "Something went wrong!");
       }
     } else {
-      // network error
-      toast.error("Network error! Please check your connection.");
+      toast.error("Network error. Please check your connection.");
     }
 
     return Promise.reject(error);

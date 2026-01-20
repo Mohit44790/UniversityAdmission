@@ -9,7 +9,7 @@ const Profile = () => {
 
   const [formData, setFormData] = useState({
     fullName: "",
-    dateOfBirth: "",
+    // dateOfBirth: "",
     ageAsOnJuly1_2024: "",
     gender: "",
     category: "",
@@ -102,7 +102,7 @@ const Profile = () => {
               required
             />
 
-            {/* ✅ DATE PICKER FIXED */}
+            {/* ✅ DATE PICKER FIXED
             <input
               type="date"
               name="dateOfBirth"
@@ -110,7 +110,7 @@ const Profile = () => {
               onChange={handleChange}
               className="input"
               required
-            />
+            /> */}
 
             <input
               type="number"

@@ -28,6 +28,7 @@ export const loginUser = createAsyncThunk(
       const { token, ...user } = response.data;
       setSessionData("token", token);
       setSessionData("user", user);
+      
       return { token, user };
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || "Login failed");
