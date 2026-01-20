@@ -8,7 +8,10 @@ const Layouts = () => {
     <div>
         <Navbar />
         <Outlet />
+        <div className='bottom'>
+
         <Footer />
+        </div>
     </div>
   )
 }
