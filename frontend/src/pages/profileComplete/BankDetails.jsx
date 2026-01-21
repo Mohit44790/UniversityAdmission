@@ -43,12 +43,12 @@ const BankDetails = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8">
       <h2 className="text-2xl font-bold mb-6 text-[#4C489D]">
         Bank Details
       </h2>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white p-6 grid grid-cols-2 gap-4 rounded-xl shadow space-y-6">
 
         <input
           name="accountHolderName"
