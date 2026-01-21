@@ -7,6 +7,7 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 import Profile from "../pages/profileComplete/Profile";
 import EditProfile from "../pages/profileComplete/EditProfile";
 import Family from "../pages/profileComplete/Family";
+import BankDetails from "../pages/profileComplete/BankDetails";
 
 const Login = lazy(() => import("../pages/auth/Login"));
 const Signup = lazy(() => import("../pages/auth/Signup"));
@@ -33,6 +34,7 @@ const AppRoutes = () => {
             <Route path="/profile" element={<Profile />} />
             <Route path="/edit-profile" element={<EditProfile />} />
             <Route path="/family-details" element={<Family />} />
+            <Route path="/bank-details" element={<BankDetails />} />
           </Route>
         </Route>
       </Routes>
