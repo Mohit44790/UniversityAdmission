@@ -13,6 +13,14 @@ const OtherDetails = () => {
     abcId:"",
     universityEmployeeId:"",
   })
+
+  const handleChange = (e) =>{
+    const {name,type,checked,value} = e.target;
+    setFormData((prev) =>({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  }
   return (
     <div>OtherDetails</div>
   )
