@@ -95,14 +95,17 @@ const BankDetails = () => {
           required
         />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className={`w-full md:w-64 bg-[#4C489D] text-white py-3 rounded-full font-semibold transition
-            ${loading ? "opacity-60" : "hover:scale-105"}`}
-        >
-          {loading ? "Saving..." : "Save Bank Details"}
-        </button>
+        <div className="col-span-2 flex justify-center mt-4">
+  <button
+    type="submit"
+    disabled={loading}
+    className={`w-full md:w-64 bg-[#4C489D] text-white py-3 rounded-full font-semibold transition
+      ${loading ? "opacity-60" : "hover:scale-105"}`}
+  >
+    {loading ? "Saving..." : "Save Bank Details"}
+  </button>
+</div>
+
       </form>
     </div>
   );
