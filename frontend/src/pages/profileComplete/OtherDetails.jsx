@@ -21,6 +21,12 @@ const OtherDetails = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
   }
+
+  const handleSubmit = (e) =>{
+    e.preventDefault();
+
+    console.log("other Details submitted:",formData);
+  }
   return (
     <div>OtherDetails</div>
   )
