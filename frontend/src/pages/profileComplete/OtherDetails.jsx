@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { saveOtherDetails } from '../../redux/slices/profileSlice';
 
 const OtherDetails = () => {
   const [loading, setLoading] = useState(false);
@@ -22,11 +23,24 @@ const OtherDetails = () => {
     }));
   }
 
-  const handleSubmit = (e) =>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("other Details submitted:",formData);
-  }
+    console.log("Other Details Payload:", formData);
+
+    try {
+      setLoading(true);
+
+      // 🔗 API CALL GOES HERE
+      await saveOtherDetails(formData);
+
+      toast.success("Other details saved successfully");
+    } catch (error) {
+      toast.error("Failed to save other details");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div>OtherDetails</div>
   )
