@@ -18,10 +18,10 @@ const Dashboard = () => {
 
   const isProfileComplete = profile?.isProfileComplete || false;
 
-  const email =
-    profile?.email ||
-    user?.userResponse?.email ||
-    user?.accessToken?.email ||
+  const alternateEmail =
+    profile?.alternateEmail ||
+    user?.userResponse?.alternateEmail ||
+    user?.accessToken?.alternateEmail ||
     "N/A";
 
   const alternateMobile =
@@ -49,7 +49,7 @@ const Dashboard = () => {
 
               <p>
                 <span className="font-semibold">Email:</span>{" "}
-                {email}
+                {alternateEmail}
               </p>
 
               <p>
