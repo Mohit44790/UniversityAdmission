@@ -1,13 +1,17 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
+
 import OtpVerify from "../pages/auth/OtpVerify";
 import ResetPassword from "../pages/auth/ResetPassword";
 import ForgotPassword from "../pages/auth/ForgotPassword";
+
+import ProfileLayout from "../pages/profileComplete/ProfileLayout";
 import Profile from "../pages/profileComplete/Profile";
-import EditProfile from "../pages/profileComplete/EditProfile";
-import Family from "../pages/profileComplete/Family";
 import BankDetails from "../pages/profileComplete/BankDetails";
+import Family from "../pages/profileComplete/Family";
+import OtherDetails from "../pages/profileComplete/OtherDetails";
+import UploadDocuments from "../pages/profileComplete/UploadDocuments";
 
 const Login = lazy(() => import("../pages/auth/Login"));
 const Signup = lazy(() => import("../pages/auth/Signup"));
@@ -20,21 +24,26 @@ const AppRoutes = () => {
   return (
     <Suspense fallback={<Loader />}>
       <Routes>
-        {/* 🔓 Public Routes */}
+        {/* 🔓 Public */}
         <Route path="/" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/verify-otp" element={<OtpVerify />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* 🔐 Protected Routes */}
+        {/* 🔐 Protected */}
         <Route element={<ProtectedRoute />}>
           <Route element={<Layouts />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/edit-profile" element={<EditProfile />} />
-            <Route path="/family-details" element={<Family />} />
-            <Route path="/bank-details" element={<BankDetails />} />
+
+            {/* 🧩 PROFILE STEPPER */}
+            <Route path="/profile" element={<ProfileLayout />}>
+              <Route index element={<Profile />} />
+              <Route path="bank" element={<BankDetails />} />
+              <Route path="family" element={<Family />} />
+              <Route path="other" element={<OtherDetails />} />
+              <Route path="documents" element={<UploadDocuments />} />
+            </Route>
           </Route>
         </Route>
       </Routes>
