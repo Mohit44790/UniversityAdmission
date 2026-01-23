@@ -14,7 +14,7 @@ const ProfileLayout = () => {
 
   useEffect(() => {
     if (!profile) {
-      dispatch(fetchStudentProfile());
+      dispatch(fetchStudentProfile()); 
     }
   }, [dispatch, profile]);
 
