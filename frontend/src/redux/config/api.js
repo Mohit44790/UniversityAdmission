@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { getSessionData, removeSessionData } from "../../utils/helpers";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: import.meta.env.VITE_API_URL, // ✅ USE ENV
   timeout: 10000,
 });
 
