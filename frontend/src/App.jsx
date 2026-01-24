@@ -1,5 +1,5 @@
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import './App.css'
 import AppRoutes from './routes/AppRoutes'
 import { ToastContainer } from "react-toastify";
@@ -9,10 +9,14 @@ import { useEffect } from 'react';
 
 function App() {
    const dispatch = useDispatch();
+   const { token, hasLoggedIn } = useSelector((state) => state.auth);
 
-  useEffect(() => {
+useEffect(() => {
+  // ✅ validate ONLY on refresh, not immediately after login
+  if (token && !hasLoggedIn) {
     dispatch(validateToken());
-  }, [dispatch]);
+  }
+}, [token, hasLoggedIn, dispatch]);
   
 
   return (

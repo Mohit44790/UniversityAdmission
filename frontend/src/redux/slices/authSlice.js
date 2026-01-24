@@ -112,16 +112,19 @@ const authSlice = createSlice({
     token: getSessionData("token") || null,
     loading: false,
     validating: true, 
+    hasLoggedIn: false, 
     error: null,
     message: null,
   },
   reducers: {
     logout: (state) => {
-      state.user = null;
-      state.token = null;
-      removeSessionData("token");
-      removeSessionData("user");
-    },
+  state.user = null;
+  state.token = null;
+  state.hasLoggedIn = false;
+  removeSessionData("token");
+  removeSessionData("user");
+},
+
     clearError: (state) => {
       state.error = null;
     },
@@ -155,10 +158,11 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-      })
+  state.loading = false;
+  state.user = action.payload.user;
+  state.token = action.payload.token;
+  state.hasLoggedIn = true;   // 👈 VERY IMPORTANT
+})
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;

@@ -30,22 +30,22 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error?.response?.status;
+    const token = getSessionData("token"); // 🔑 IMPORTANT
 
-    // 🔥 SESSION INVALID (401 / 403)
-    if (status === 401 || status === 403) {
+    // 🔥 INVALID SESSION (ONLY if token exists)
+    if ((status === 401 || status === 403) && token) {
       toast.error("Session expired. Please login again.");
 
       removeSessionData("token");
       removeSessionData("user");
 
-      // prevent redirect loop
       if (window.location.pathname !== "/login") {
         window.location.href = "/login";
       }
     }
 
-    // 🔥 SERVER DOWN / NETWORK ERROR
-    else if (!error.response) {
+    // 🔥 SERVER DOWN (ONLY if token exists)
+    else if (!error.response && token) {
       toast.error("Server down. Please login again.");
 
       removeSessionData("token");
@@ -57,7 +57,7 @@ api.interceptors.response.use(
     }
 
     // ❌ OTHER ERRORS
-    else {
+    else if (error.response) {
       toast.error(
         error.response?.data?.message || "Something went wrong!"
       );
