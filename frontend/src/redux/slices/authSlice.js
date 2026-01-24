@@ -88,6 +88,20 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
+
+export const validateToken = createAsyncThunk(
+  "auth/validateToken",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await api.get("/api/auth/me"); // backend must verify token
+      return res.data; // user object
+    } catch (err) {
+      return rejectWithValue("Invalid token");
+    }
+  }
+);
+
+
 // ===============================
 // Auth Slice
 // ===============================
@@ -97,6 +111,7 @@ const authSlice = createSlice({
     user: null,
     token: getSessionData("token") || null,
     loading: false,
+    validating: true, 
     error: null,
     message: null,
   },
@@ -211,7 +226,22 @@ const authSlice = createSlice({
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+      .addCase(validateToken.pending, (state) => {
+  state.validating = true;
+})
+.addCase(validateToken.fulfilled, (state, action) => {
+  state.validating = false;
+  state.user = action.payload;
+})
+.addCase(validateToken.rejected, (state) => {
+  state.validating = false;
+  state.user = null;
+  state.token = null;
+  removeSessionData("token");
+  removeSessionData("user");
+});
+
   },
 });
 
