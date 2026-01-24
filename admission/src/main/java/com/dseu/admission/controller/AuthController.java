@@ -110,12 +110,13 @@ public class AuthController {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated()
+        if (authentication == null
+                || !authentication.isAuthenticated()
                 || authentication instanceof AnonymousAuthenticationToken) {
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        String email = authentication.getName(); // ✅ SAFE NOW
+        String email = authentication.getName();
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -126,6 +127,7 @@ public class AuthController {
                 "fullName", user.getFullName()
         ));
     }
+
 
 
 

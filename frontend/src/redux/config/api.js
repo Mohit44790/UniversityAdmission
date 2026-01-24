@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { getSessionData, removeSessionData } from "../../utils/helpers";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL, // ✅ USE ENV
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
 });
 
@@ -12,7 +12,7 @@ const api = axios.create({
 // ===============================
 api.interceptors.request.use(
   (config) => {
-    const token = getSessionData("token"); // ✅ ONLY this
+    const token = getSessionData("token");
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -29,22 +29,38 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response) {
-      const { status, data } = error.response;
+    const status = error?.response?.status;
 
-      if (status === 401) {
-  toast.error("Session expired. Please login again.");
-  removeSessionData("token");
-  removeSessionData("user");
-  window.location.href = "/login";
-}
- else if (status === 403) {
-        toast.error("Access denied.");
-      } else {
-        toast.error(data?.message || "Something went wrong!");
+    // 🔥 SESSION INVALID (401 / 403)
+    if (status === 401 || status === 403) {
+      toast.error("Session expired. Please login again.");
+
+      removeSessionData("token");
+      removeSessionData("user");
+
+      // prevent redirect loop
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
       }
-    } else {
-      toast.error("Server Down! Please try again later.");
+    }
+
+    // 🔥 SERVER DOWN / NETWORK ERROR
+    else if (!error.response) {
+      toast.error("Server down. Please login again.");
+
+      removeSessionData("token");
+      removeSessionData("user");
+
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+
+    // ❌ OTHER ERRORS
+    else {
+      toast.error(
+        error.response?.data?.message || "Something went wrong!"
+      );
     }
 
     return Promise.reject(error);
