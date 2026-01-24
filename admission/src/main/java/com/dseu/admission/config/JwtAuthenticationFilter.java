@@ -31,24 +31,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            String token = authHeader.substring(7);
+        String token = authHeader.substring(7);
 
+        try {
             if (jwtUtil.validateToken(token)) {
 
                 String email = jwtUtil.extractEmail(token);
                 String role = jwtUtil.extractRole(token);
 
-                // 🔐 ROLE PREFIX IS MANDATORY
-                SimpleGrantedAuthority authority =
-                        new SimpleGrantedAuthority("ROLE_" + role);
-
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 email,
                                 null,
-                                List.of(authority)
+                                List.of(new SimpleGrantedAuthority("ROLE_" + role))
                         );
 
                 authentication.setDetails(
@@ -59,8 +59,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .getContext()
                         .setAuthentication(authentication);
             }
+        } catch (Exception ex) {
+            // ❌ invalid token → clear context
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);
     }
 }
+

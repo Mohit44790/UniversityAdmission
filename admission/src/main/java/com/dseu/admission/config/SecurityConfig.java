@@ -34,18 +34,26 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
 
-                        // 🌍 PUBLIC
-                        .requestMatchers("/api/auth/**").permitAll()
+                        // 🌍 PUBLIC AUTH APIs
+                        .requestMatchers(
+                                "/api/auth/login",
+                                "/api/auth/register",
+                                "/api/auth/verify-otp",
+                                "/api/auth/resend-otp",
+                                "/api/auth/forgot-password",
+                                "/api/auth/reset-password"
+                        ).permitAll()
 
-                        // 🎓 STUDENT ONLY
-                        .requestMatchers("/api/student/**")
-                        .hasRole("STUDENT")
+                        // 🔐 AUTH CHECK
+                        .requestMatchers("/api/auth/me").authenticated()
 
-                        // 🛡️ ADMIN ONLY
-                        .requestMatchers("/api/admin/**")
-                        .hasRole("ADMIN")
+                        // 🎓 STUDENT
+                        .requestMatchers("/api/student/**").hasRole("STUDENT")
 
-                        // ❌ BLOCK EVERYTHING ELSE
+                        // 🛡️ ADMIN
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // ❌ EVERYTHING ELSE
                         .anyRequest().denyAll()
                 )
                 .addFilterBefore(
@@ -61,29 +69,24 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // ===============================
-    // CORS CONFIG
-    // ===============================
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-
         config.setAllowedOriginPatterns(List.of(
                 "http://localhost:5173",
                 "http://localhost:3000",
                 "http://localhost:4200",
                 "https://admission.mycollege.in"
         ));
-
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-
         return source;
     }
 }
+

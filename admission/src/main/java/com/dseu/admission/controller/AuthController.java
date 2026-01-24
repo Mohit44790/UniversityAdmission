@@ -98,4 +98,22 @@ public class AuthController {
         authService.resetPassword(request);
         return ResponseEntity.ok("Password reset successfully");
     }
+    @GetMapping("/me")
+    public ResponseEntity<?> me(@RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
+        String email = jwtUtil.extractUsername(token);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return ResponseEntity.ok(Map.of(
+                "email", user.getEmail(),
+                "role", user.getRole(),
+                "fullName", user.getFullName()
+        ));
+    }
+
+
+
 }

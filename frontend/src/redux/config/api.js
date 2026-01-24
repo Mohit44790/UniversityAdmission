@@ -33,10 +33,12 @@ api.interceptors.response.use(
       const { status, data } = error.response;
 
       if (status === 401) {
-        toast.error("Session expired. Please login again.");
-        removeSessionData("token");
-        removeSessionData("user");
-      } else if (status === 403) {
+  toast.error("Session expired. Please login again.");
+  removeSessionData("token");
+  removeSessionData("user");
+  window.location.href = "/login";
+}
+ else if (status === 403) {
         toast.error("Access denied.");
       } else {
         toast.error(data?.message || "Something went wrong!");
