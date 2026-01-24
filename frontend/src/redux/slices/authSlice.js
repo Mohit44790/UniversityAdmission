@@ -234,17 +234,21 @@ const authSlice = createSlice({
       .addCase(validateToken.pending, (state) => {
   state.validating = true;
 })
+
 .addCase(validateToken.fulfilled, (state, action) => {
   state.validating = false;
   state.user = action.payload;
 })
+
 .addCase(validateToken.rejected, (state) => {
   state.validating = false;
-  state.user = null;
   state.token = null;
+  state.user = null;
   removeSessionData("token");
   removeSessionData("user");
-});
+})
+
+
 
   },
 });

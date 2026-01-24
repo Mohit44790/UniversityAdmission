@@ -10,18 +10,15 @@ const api = axios.create({
 // ===============================
 // Request Interceptor
 // ===============================
-api.interceptors.request.use(
-  (config) => {
-    const token = getSessionData("token");
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    return config;
-  },
-  (error) => Promise.reject(error)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // ❌ YAHAN LOGOUT NAHI KARNA
+    // Sirf error forward karo
+    return Promise.reject(error);
+  }
 );
+
 
 // ===============================
 // Response Interceptor
