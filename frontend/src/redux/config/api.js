@@ -3,22 +3,25 @@ import { toast } from "react-toastify";
 import { getSessionData, removeSessionData } from "../../utils/helpers";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL, // ✅ USE ENV
   timeout: 10000,
 });
 
 // ===============================
 // Request Interceptor
 // ===============================
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // ❌ YAHAN LOGOUT NAHI KARNA
-    // Sirf error forward karo
-    return Promise.reject(error);
-  }
-);
+api.interceptors.request.use(
+  (config) => {
+    const token = getSessionData("token"); // ✅ ONLY this
 
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 // ===============================
 // Response Interceptor
@@ -26,38 +29,20 @@ api.interceptors.response.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const status = error?.response?.status;
-    const token = getSessionData("token"); // 🔑 IMPORTANT
+    if (error.response) {
+      const { status, data } = error.response;
 
-    // 🔥 INVALID SESSION (ONLY if token exists)
-    if ((status === 401 || status === 403) && token) {
-      toast.error("Session expired. Please login again.");
-
-      removeSessionData("token");
-      removeSessionData("user");
-
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
+      if (status === 401) {
+        toast.error("Session expired. Please login again.");
+        removeSessionData("token");
+        removeSessionData("user");
+      } else if (status === 403) {
+        toast.error("Access denied.");
+      } else {
+        toast.error(data?.message || "Something went wrong!");
       }
-    }
-
-    // 🔥 SERVER DOWN (ONLY if token exists)
-    else if (!error.response && token) {
-      toast.error("Server down. Please login again.");
-
-      removeSessionData("token");
-      removeSessionData("user");
-
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
-    }
-
-    // ❌ OTHER ERRORS
-    else if (error.response) {
-      toast.error(
-        error.response?.data?.message || "Something went wrong!"
-      );
+    } else {
+      toast.error("Server Down! Please try again later.");
     }
 
     return Promise.reject(error);
