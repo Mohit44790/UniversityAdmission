@@ -42,7 +42,7 @@ api.interceptors.response.use(
         toast.error(data?.message || "Something went wrong!");
       }
     } else {
-      toast.error("Network error. Please check your connection.");
+      toast.error("Server Down! Please try again later.");
     }
 
     return Promise.reject(error);
