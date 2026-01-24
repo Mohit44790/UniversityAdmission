@@ -10,7 +10,11 @@ import com.dseu.admission.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -98,11 +102,20 @@ public class AuthController {
         authService.resetPassword(request);
         return ResponseEntity.ok("Password reset successfully");
     }
-    @GetMapping("/me")
-    public ResponseEntity<?> me(@RequestHeader("Authorization") String authHeader) {
 
-        String token = authHeader.replace("Bearer ", "");
-        String email = jwtUtil.extractUsername(token);
+
+    @GetMapping("/me")
+    public ResponseEntity<?> me() {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()
+                || authentication instanceof AnonymousAuthenticationToken) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        String email = authentication.getName(); // ✅ SAFE NOW
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -113,6 +126,8 @@ public class AuthController {
                 "fullName", user.getFullName()
         ));
     }
+
+
 
 
 
