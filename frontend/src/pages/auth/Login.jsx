@@ -110,7 +110,7 @@ const Login = () => {
   </span>
 </p>
  {/* Social Login */}
-          <div className="absolute bottom-6 right-6 text-white text-center">
+          {/* <div className="absolute bottom-6 right-6 text-white text-center">
             <h3 className="text-xs mb-2 uppercase tracking-widest opacity-80">
               log in via
             </h3>
@@ -119,7 +119,7 @@ const Login = () => {
               <i className="fab fa-facebook cursor-pointer hover:scale-125 hover:text-blue-300 transition" />
               <i className="fab fa-twitter cursor-pointer hover:scale-125 hover:text-sky-300 transition" />
             </div>
-            </div>
+            </div> */}
       </div>
       </div>
     </div>
