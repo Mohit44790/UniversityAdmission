@@ -47,7 +47,7 @@ const Dashboard = () => {
   const profileCompleted = 
    profile.fullName &&
    profile.alternateMobile &&
-   profile.permanentAdress &&
+   profile.permanentAddress &&
    profile.gender;
 
     if (!profileCompleted) {
@@ -66,17 +66,46 @@ const Dashboard = () => {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="text-center mb-10">
-        <p>
-          DSEU Admission Portal {currentYear}-{nextYear}
+         <p className="text-3xl font-extrabold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent drop-shadow-sm">
+          DSEU Admission Portal {currentYear}–{nextYear}
         </p>
 
       </div>
 
       {/* card  */}
-      <div>
-        <h2>
-          Welcome
+       <div className="bg-white/80 backdrop-blur-md p-10 rounded-2xl shadow-xl border border-gray-200">
+        <h2 className="text-2xl font-bold text-gray-900">
+          Welcome, <span className="text-blue-600">{profile.fullName}</span>
         </h2>
+
+        <p className="text-gray-700 mt-3 mb-6">
+          Your profile is verified and complete. You may continue your application.
+        </p>
+
+        <div className="flex gap-4">
+ <button
+    onClick={() => navigate("/profile")}
+    className="
+      px-6 py-3 font-semibold text-white rounded-xl shadow-lg cursor-pointer
+      bg-linear-to-r from-cyan-400 via-blue-500 to-indigo-600
+      hover:from-cyan-500 hover:via-blue-600 hover:to-indigo-700   
+    "
+  >
+    Edit Profile
+  </button>
+   {/* View Profile */}
+   {/* View Profile */}
+  <button
+    onClick={() => navigate("/view-profile")}
+    className="
+      px-6 py-3 font-semibold text-white rounded-xl shadow-lg cursor-pointer
+      bg-linear-to-r from-orange-500 via-orange-400 to-red-500
+      hover:from-orange-600 hover:via-orange-600 hover:to-red-600
+         "
+  >
+    View Profile
+  </button>
+        </div>
       </div>
     </div>
   );
@@ -93,14 +122,19 @@ const DashboardMessage =({
   nextYear
 }) =>{
   return (
-    <div>
-      <p>
+    <div className="flex flex-col justify-center items-center min-h-screen px-4">
+      <p className="text-3xl font-extrabold bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent mb-6">
         DSEU Admission Portal {currentYear}-{nextYear}
       </p>
-      <div>
-        <h2>{title}</h2>
-        <p>{description}</p>
-        <button onClick={buttonAction}>{buttonText}</button>
+      <div className="bg-white/90 backdrop-blur-lg border border-gray-300 text-gray-800 px-10 py-8 rounded-2xl shadow-2xl max-w-md text-center">
+        <h2 className="text-2xl font-bold">{title}</h2>
+        <p className="mt-3 text-sm text-gray-600">{description}</p>
+        <button
+          onClick={buttonAction}
+          className="mt-6 w-full py-3 cursor-pointer bg-blue-600 text-white rounded-xl shadow-md hover:bg-blue-700 hover:shadow-xl transition-all active:scale-95"
+        >
+          {buttonText}
+        </button>
       </div>
     </div>
   )
