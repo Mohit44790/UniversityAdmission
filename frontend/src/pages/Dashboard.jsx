@@ -48,6 +48,7 @@ const Dashboard = () => {
    profile.fullName &&
    profile.alternateMobile &&
    profile.permanentAddress &&
+  //  profile.motherName &&
    profile.gender;
 
     if (!profileCompleted) {
@@ -94,7 +95,7 @@ const Dashboard = () => {
     Edit Profile
   </button>
    {/* View Profile */}
-   {/* View Profile */}
+   
   <button
     onClick={() => navigate("/view-profile")}
     className="
