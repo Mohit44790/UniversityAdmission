@@ -18,15 +18,7 @@ const Signup = lazy(() => import("../pages/auth/Signup"));
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const Layouts = lazy(() => import("../pages/Layouts"));
 
-const Loader = () => {
-  return (
-    <div className="loader-wrapper">
-      <div className="spinner"></div>
-      <p>Loading…</p>
-    </div>
-  );
-};
-
+const Loader = () => <div className="loader">Loading...</div>;
 
 const AppRoutes = () => {
   return (
