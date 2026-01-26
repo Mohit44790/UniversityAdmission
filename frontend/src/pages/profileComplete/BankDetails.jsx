@@ -5,7 +5,9 @@ import { saveBankDetails } from "../../redux/slices/profileSlice";
 
 const BankDetails = () => {
   const dispatch = useDispatch();
-  const { loading, bankDetails } = useSelector((state) => state.profile);
+  const { loading, profile } = useSelector((state) => state.profile);
+
+  const bankDetails = profile?.bank_detail; // ✅ CORRECT SOURCE
 
   const [formData, setFormData] = useState({
     accountHolderName: "",
@@ -15,7 +17,7 @@ const BankDetails = () => {
     branchName: "",
   });
 
-  // 🔁 PREFILL FORM
+  // ✅ PREFILL
   useEffect(() => {
     if (bankDetails) {
       setFormData({
