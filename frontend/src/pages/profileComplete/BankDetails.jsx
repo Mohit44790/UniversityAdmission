@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { saveBankDetails } from "../../redux/slices/profileSlice";
 
 const BankDetails = () => {
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.profile);
+  const { loading, bankDetails } = useSelector((state) => state.profile);
 
   const [formData, setFormData] = useState({
     accountHolderName: "",
@@ -15,7 +15,19 @@ const BankDetails = () => {
     branchName: "",
   });
 
-  // ================= HANDLE CHANGE =================
+  // 🔁 PREFILL FORM
+  useEffect(() => {
+    if (bankDetails) {
+      setFormData({
+        accountHolderName: bankDetails.accountHolderName || "",
+        bankName: bankDetails.bankName || "",
+        accountNumber: bankDetails.accountNumber || "",
+        ifscCode: bankDetails.ifscCode || "",
+        branchName: bankDetails.branchName || "",
+      });
+    }
+  }, [bankDetails]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -24,13 +36,12 @@ const BankDetails = () => {
     }));
   };
 
-  // ================= SUBMIT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const payload = {
       ...formData,
-      accountNumber: String(formData.accountNumber), // backend-safe
+      accountNumber: String(formData.accountNumber),
     };
 
     const res = await dispatch(saveBankDetails(payload));
@@ -48,8 +59,10 @@ const BankDetails = () => {
         Bank Details
       </h2>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 grid grid-cols-2 gap-4 rounded-xl shadow space-y-6">
-
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 grid grid-cols-2 gap-4 rounded-xl shadow"
+      >
         <input
           name="accountHolderName"
           value={formData.accountHolderName}
@@ -96,16 +109,15 @@ const BankDetails = () => {
         />
 
         <div className="col-span-2 flex justify-center mt-4">
-  <button
-    type="submit"
-    disabled={loading}
-    className={`w-full md:w-64 bg-[#4C489D] text-white py-3 rounded-full font-semibold transition
-      ${loading ? "opacity-60" : "hover:scale-105"}`}
-  >
-    {loading ? "Saving..." : "Save Bank Details"}
-  </button>
-</div>
-
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full md:w-64 bg-[#4C489D] text-white py-3 rounded-full font-semibold transition
+              ${loading ? "opacity-60" : "hover:scale-105"}`}
+          >
+            {loading ? "Saving..." : "Save Bank Details"}
+          </button>
+        </div>
       </form>
     </div>
   );
