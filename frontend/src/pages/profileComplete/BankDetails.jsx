@@ -17,7 +17,7 @@ const BankDetails = () => {
     branchName: "",
   });
 
-  // ✅ PREFILL
+  // ✅ PREFILL data 
   useEffect(() => {
     if (bankDetails) {
       setFormData({
