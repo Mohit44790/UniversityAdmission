@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -65,4 +66,10 @@ public class StudentProfile {
     private String photoPath;
     private String signaturePath;
     private String abcDocumentPath;
+
+    // Admission flow
+    private String selectedProgramLevel;   // AFTER_10 / AFTER_12 / UG
+    private Boolean preferenceLocked = false;
+    private Boolean profileLocked = false;
+    private LocalDateTime lockedAt;
 }
