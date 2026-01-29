@@ -7,7 +7,7 @@ const BankDetails = () => {
   const dispatch = useDispatch();
   const { loading, profile } = useSelector((state) => state.profile);
 
-  const bankDetails = profile?.bank_detail; // ✅ CORRECT SOURCE
+  const bankDetails = profile?.bank_detail; 
 
   const [formData, setFormData] = useState({
     accountHolderName: "",
