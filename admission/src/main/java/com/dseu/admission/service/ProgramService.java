@@ -1,5 +1,9 @@
 package com.dseu.admission.service;
 
+import com.dseu.admission.entity.Program;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 @Service
 @RequiredArgsConstructor
 public class ProgramService {
