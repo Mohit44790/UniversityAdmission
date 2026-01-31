@@ -128,4 +128,15 @@ public class StudentProfileController {
                 "directory", userDir.toString()
         ));
     }
+
+    @PostMapping("/program-level")
+    public ResponseEntity<?> selectProgramLevel(
+            @RequestHeader("Authorization") String auth,
+            @RequestBody Map<String, String> req) {
+
+        String userId = jwtUtil.extractEmail(auth.substring(7));
+        service.selectProgramLevel(userId, req.get("programLevel"));
+        return ResponseEntity.ok("Program level selected");
+    }
+
 }
