@@ -1,14 +1,13 @@
 package com.dseu.admission.service;
 
-import com.dseu.admission.dto.BankDetailsRequest;
-import com.dseu.admission.dto.BasicDetailsRequest;
-import com.dseu.admission.dto.FamilyDetailsRequest;
-
-import com.dseu.admission.dto.OtherDetailsRequest;
+import com.dseu.admission.dto.*;
 import com.dseu.admission.entity.StudentProfile;
 import com.dseu.admission.repository.StudentProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -16,91 +15,91 @@ public class StudentProfileService {
 
     private final StudentProfileRepository repository;
 
-    private StudentProfile getOrCreate(String userId) {
-        return repository.findById(userId)
-                .orElseGet(() -> {
-                    StudentProfile p = new StudentProfile();
-                    p.setUserId(userId);
-                    return p;
-                });
+    // ================= BASIC =================
+    public void saveBasic(String userId, BasicDetailsRequest req) {
+        StudentProfile profile = getOrCreate(userId);
+
+        if (Boolean.TRUE.equals(profile.getProfileLocked())) {
+            throw new RuntimeException("Profile is locked");
+        }
+
+        profile.setFullName(req.getFullName());
+        profile.setDateOfBirth(req.getDateOfBirth());
+        profile.setAgeAsOnJuly1_2024(req.getAgeAsOnJuly1_2024());
+        profile.setGender(req.getGender());
+        profile.setCategory(req.getCategory());
+        profile.setReligion(req.getReligion());
+        profile.setNationality(req.getNationality());
+        profile.setPermanentAddress(req.getPermanentAddress());
+        profile.setCorrespondenceAddress(req.getCorrespondenceAddress());
+
+        repository.save(profile);
     }
 
-    public void saveBasic(String userId, BasicDetailsRequest r) {
-        StudentProfile p = getOrCreate(userId);
+    // ================= FAMILY =================
+    public void saveFamily(String userId, FamilyDetailsRequest req) {
+        StudentProfile profile = getOrCreate(userId);
+        ensureNotLocked(profile);
 
-        p.setFullName(r.getFullName());
-        p.setDateOfBirth(r.getDateOfBirth());
-        p.setAgeAsOnJuly1_2024(r.getAgeAsOnJuly1_2024());
-        p.setGender(r.getGender());
-        p.setCategory(r.getCategory());
-        p.setReligion(r.getReligion());
-        p.setNationality(r.getNationality());
-        p.setAlternateEmail(r.getAlternateEmail());
-        p.setAlternateMobile(r.getAlternateMobile());
-        p.setPermanentAddress(r.getPermanentAddress());
-        p.setCorrespondenceAddress(r.getCorrespondenceAddress());
-        p.setEnrolledBefore(r.getEnrolledBefore());
-        p.setEnrollmentNumber(r.getEnrollmentNumber());
-        p.setProgrammeRegistered(r.getProgrammeRegistered());
-        p.setYearOfRegistration(r.getYearOfRegistration());
+        profile.setMotherName(req.getMotherName());
+        profile.setMotherMobile(req.getMotherMobile());
+        profile.setFatherName(req.getFatherName());
+        profile.setFatherMobile(req.getFatherMobile());
+        profile.setEmergencyContact(req.getEmergencyContact());
+        profile.setFamilyIncome(req.getFamilyIncome());
 
-        repository.save(p);
+        repository.save(profile);
     }
 
-    public void saveFamily(String userId, FamilyDetailsRequest r) {
-        StudentProfile p = getOrCreate(userId);
+    // ================= BANK =================
+    public void saveBank(String userId, BankDetailsRequest req) {
+        StudentProfile profile = getOrCreate(userId);
+        ensureNotLocked(profile);
 
-        p.setMotherName(r.getMotherName());
-        p.setMotherMobile(r.getMotherMobile());
-        p.setFatherName(r.getFatherName());
-        p.setFatherMobile(r.getFatherMobile());
-        p.setEmergencyContact(r.getEmergencyContact());
-        p.setFamilyIncome(r.getFamilyIncome());
+        profile.setAccountHolderName(req.getAccountHolderName());
+        profile.setBankName(req.getBankName());
+        profile.setAccountNumber(req.getAccountNumber());
+        profile.setIfscCode(req.getIfscCode());
+        profile.setBranchName(req.getBranchName());
 
-        repository.save(p);
+        repository.save(profile);
     }
 
-    public void saveBank(String userId, BankDetailsRequest r) {
-        StudentProfile p = getOrCreate(userId);
+    // ================= OTHER =================
+    public void saveOther(String userId, OtherDetailsRequest req) {
+        StudentProfile profile = getOrCreate(userId);
+        ensureNotLocked(profile);
 
-        p.setAccountHolderName(r.getAccountHolderName());
-        p.setBankName(r.getBankName());
-        p.setAccountNumber(r.getAccountNumber());
-        p.setIfscCode(r.getIfscCode());
-        p.setBranchName(r.getBranchName());
+        profile.setPwbd(req.getPwbd());
+        profile.setKashmiriMigrant(req.getKashmiriMigrant());
+        profile.setPmss(req.getPmss());
+        profile.setDefenceWard(req.getDefenceWard());
+        profile.setHasDefenceCertificate(req.getHasDefenceCertificate());
+        profile.setMedicalCondition(req.getMedicalCondition());
+        profile.setAbcId(req.getAbcId());
+        profile.setUniversityEmployeeWard(req.getUniversityEmployeeWard());
 
-        repository.save(p);
+        repository.save(profile);
     }
 
-    public void saveOther(String userId, OtherDetailsRequest r) {
-        StudentProfile p = getOrCreate(userId);
+    // ================= PROGRAM LEVEL =================
+    public void selectProgramLevel(String userId, String programLevel) {
+        StudentProfile profile = getOrCreate(userId);
+        ensureNotLocked(profile);
 
-        p.setPwbd(r.getPwbd());
-        p.setKashmiriMigrant(r.getKashmiriMigrant());
-        p.setPmss(r.getPmss());
-        p.setDefenceWard(r.getDefenceWard());
-        p.setHasDefenceCertificate(r.getHasDefenceCertificate());
-        p.setMedicalCondition(r.getMedicalCondition());
-        p.setAbcId(r.getAbcId());
-        p.setUniversityEmployeeWard(r.getUniversityEmployeeWard());
-
-        repository.save(p);
+        profile.setSelectedProgramLevel(programLevel);
+        repository.save(profile);
     }
 
-    public StudentProfile getProfile(String userId) {
-        return repository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
-    }
-
-    // ✅ NEW METHOD
+    // ================= DOCUMENT PATHS =================
     public void updateDocumentPaths(
             String userId,
             String photoPath,
             String signaturePath,
             String abcPath) {
 
-        StudentProfile profile = repository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        StudentProfile profile = getOrCreate(userId);
+        ensureNotLocked(profile);
 
         profile.setPhotoPath(photoPath);
         profile.setSignaturePath(signaturePath);
@@ -109,5 +108,43 @@ public class StudentProfileService {
         repository.save(profile);
     }
 
+    // ================= FINAL SUBMIT (LOCK) =================
+    public void finalSubmit(String userId) {
+        StudentProfile profile = getOrCreate(userId);
 
+        if (Boolean.TRUE.equals(profile.getProfileLocked())) {
+            throw new RuntimeException("Profile already submitted");
+        }
+
+        profile.setProfileLocked(true);
+        profile.setLockedAt(LocalDateTime.now());
+
+        repository.save(profile);
+    }
+
+    // ================= GET PROFILE =================
+    public StudentProfile getProfile(String userId) {
+        return repository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+    }
+
+    // ================= HELPER METHODS =================
+    private StudentProfile getOrCreate(String userId) {
+        return repository.findById(userId).orElseGet(() -> {
+            StudentProfile p = new StudentProfile();
+            p.setUserId(userId);
+            p.setProfileLocked(false);
+            p.setPreferenceLocked(false);
+            return p;
+        });
+    }
+
+    private void ensureNotLocked(StudentProfile profile) {
+        if (Boolean.TRUE.equals(profile.getProfileLocked())) {
+            throw new RuntimeException("Profile is locked. Editing not allowed.");
+        }
+    }
+    public List<StudentProfile> getSubmittedProfiles() {
+        return repository.findByProfileLockedTrue();
+    }
 }

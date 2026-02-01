@@ -38,4 +38,8 @@ public class StudentPreferenceService {
         profile.setPreferenceLocked(true);
         profileRepo.save(profile);
     }
+    public List<StudentPreference> getAllLockedPreferences() {
+        return repository.findAll();
+    }
+
 }
