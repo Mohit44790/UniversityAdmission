@@ -2,6 +2,8 @@ package com.dseu.admission.service;
 
 import com.dseu.admission.entity.StudentPreference;
 import com.dseu.admission.entity.StudentProfile;
+import com.dseu.admission.repository.ProgramCollegeRepository;
+import com.dseu.admission.repository.StudentPreferenceRepository;
 import com.dseu.admission.repository.StudentProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

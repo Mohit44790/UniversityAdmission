@@ -1,7 +1,11 @@
 package com.dseu.admission.service;
 
+import com.dseu.admission.entity.EditWindow;
+import com.dseu.admission.repository.EditWindowRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor

@@ -1,12 +1,12 @@
 package com.dseu.admission.controller;
 
+import com.dseu.admission.dto.ProgramCollegeRequest;
 import com.dseu.admission.entity.ProgramCollege;
 import com.dseu.admission.service.ProgramCollegeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/program-colleges")
@@ -16,12 +16,13 @@ public class ProgramCollegeController {
     private final ProgramCollegeService service;
 
     @PostMapping
-    public ProgramCollege create(@RequestBody Map<String, Integer> req) {
+    public ProgramCollege create(@RequestBody ProgramCollegeRequest req) {
+
         return service.create(
-                req.get("programId"),
-                req.get("collegeId"),
-                req.get("seats"),
-                req.get("minRank")
+                req.getProgramId(),
+                req.getCollegeId(),
+                req.getSeats(),
+                req.getMinRank()
         );
     }
 

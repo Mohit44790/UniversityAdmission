@@ -1,6 +1,7 @@
 package com.dseu.admission.service;
 
 import com.dseu.admission.entity.College;
+import com.dseu.admission.repository.CollegeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
