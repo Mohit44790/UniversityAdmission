@@ -139,4 +139,13 @@ public class StudentProfileController {
         return ResponseEntity.ok("Program level selected");
     }
 
+    @PostMapping("/final-submit")
+    public ResponseEntity<?> finalSubmit(@RequestHeader("Authorization") String auth) {
+
+        String userId = jwtUtil.extractEmail(auth.substring(7));
+        service.finalSubmit(userId);
+        return ResponseEntity.ok("Profile submitted & locked");
+    }
+
+
 }
