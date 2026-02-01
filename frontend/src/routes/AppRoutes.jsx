@@ -16,6 +16,7 @@ import UploadDocuments from "../pages/profileComplete/UploadDocuments";
 const Login = lazy(() => import("../pages/auth/Login"));
 const Signup = lazy(() => import("../pages/auth/Signup"));
 const Dashboard = lazy(() => import("../pages/Dashboard"));
+const AdminDashboard = lazy(() => import("../pages/admin/AdminDashboard")); // [NEW]
 const Layouts = lazy(() => import("../pages/Layouts"));
 
 const Loader = () => <div className="loader">Loading...</div>;
@@ -35,6 +36,7 @@ const AppRoutes = () => {
         <Route element={<ProtectedRoute />}>
           <Route element={<Layouts />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
             {/* 🧩 PROFILE STEPPER */}
             <Route path="/profile" element={<ProfileLayout />}>
