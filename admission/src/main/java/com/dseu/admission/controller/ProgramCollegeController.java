@@ -17,7 +17,6 @@ public class ProgramCollegeController {
 
     @PostMapping
     public ProgramCollege create(@RequestBody ProgramCollegeRequest req) {
-
         return service.create(
                 req.getProgramId(),
                 req.getCollegeId(),
@@ -27,7 +26,8 @@ public class ProgramCollegeController {
     }
 
     @GetMapping
-    public List<ProgramCollege> byLevel(@RequestParam String level) {
+    public List<ProgramCollege> getByLevel(@RequestParam String level) {
         return service.getByLevel(level);
     }
 }
+

@@ -15,31 +15,38 @@ import java.util.List;
 public class StudentPreferenceService {
 
     private final StudentPreferenceRepository repository;
-    private final ProgramCollegeRepository pcRepo;
     private final StudentProfileRepository profileRepo;
+    private final EditWindowService editWindowService;
 
     public void savePreferences(String studentId, List<StudentPreference> prefs) {
 
-        StudentProfile profile = profileRepo.findById(studentId).orElseThrow();
+        StudentProfile profile = profileRepo.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
 
-        if (profile.getPreferenceLocked())
-            throw new RuntimeException("Preferences locked");
+        boolean editAllowed = editWindowService.isEditAllowed();
+
+        if (Boolean.TRUE.equals(profile.getPreferenceLocked()) && !editAllowed) {
+            throw new RuntimeException("Preferences are locked");
+        }
 
         repository.deleteByStudentId(studentId);
 
-        prefs.forEach(p -> {
+        for (StudentPreference p : prefs) {
             p.setStudentId(studentId);
             repository.save(p);
-        });
+        }
     }
 
-    public void lock(String studentId) {
-        StudentProfile profile = profileRepo.findById(studentId).orElseThrow();
+    public void lockPreferences(String studentId) {
+
+        StudentProfile profile = profileRepo.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
         profile.setPreferenceLocked(true);
         profileRepo.save(profile);
     }
-    public List<StudentPreference> getAllLockedPreferences() {
+
+    public List<StudentPreference> getAllPreferences() {
         return repository.findAll();
     }
-
 }

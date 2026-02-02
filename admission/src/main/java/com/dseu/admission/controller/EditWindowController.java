@@ -3,6 +3,7 @@ package com.dseu.admission.controller;
 import com.dseu.admission.service.EditWindowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/admin/edit-window")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class EditWindowController {
 
     private final EditWindowService service;
@@ -26,4 +28,5 @@ public class EditWindowController {
         return ResponseEntity.ok("Edit window closed");
     }
 }
+
 

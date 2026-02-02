@@ -22,13 +22,16 @@ public class EditWindowService {
 
     public void close() {
         EditWindow w = repository.findTopByOrderByIdDesc();
-        w.setActive(false);
-        w.setEndTime(LocalDateTime.now());
-        repository.save(w);
+        if (w != null) {
+            w.setActive(false);
+            w.setEndTime(LocalDateTime.now());
+            repository.save(w);
+        }
     }
 
-    public boolean isActive() {
-        return repository.findTopByOrderByIdDesc().getActive();
+    public boolean isEditAllowed() {
+        EditWindow w = repository.findTopByOrderByIdDesc();
+        return w != null && Boolean.TRUE.equals(w.getActive());
     }
 }
 

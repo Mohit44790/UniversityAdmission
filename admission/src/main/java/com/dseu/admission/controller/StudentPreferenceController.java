@@ -5,6 +5,7 @@ import com.dseu.admission.service.StudentPreferenceService;
 import com.dseu.admission.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/student/preferences")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('STUDENT')")
 public class StudentPreferenceController {
 
     private final StudentPreferenceService service;
@@ -22,13 +24,19 @@ public class StudentPreferenceController {
             @RequestHeader("Authorization") String auth,
             @RequestBody List<StudentPreference> prefs) {
 
-        service.savePreferences(jwtUtil.extractEmail(auth.substring(7)), prefs);
+        String studentId = jwtUtil.extractEmail(auth.substring(7));
+        service.savePreferences(studentId, prefs);
         return ResponseEntity.ok("Preferences saved");
     }
 
     @PostMapping("/lock")
-    public ResponseEntity<?> lock(@RequestHeader("Authorization") String auth) {
-        service.lock(jwtUtil.extractEmail(auth.substring(7)));
+    public ResponseEntity<?> lock(
+            @RequestHeader("Authorization") String auth) {
+
+        String studentId = jwtUtil.extractEmail(auth.substring(7));
+        service.lockPreferences(studentId);
         return ResponseEntity.ok("Preferences locked");
     }
 }
+
+

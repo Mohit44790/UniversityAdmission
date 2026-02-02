@@ -1,5 +1,6 @@
 package com.dseu.admission.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Getter;
@@ -69,7 +70,13 @@ public class StudentProfile {
 
     // Admission flow
     private String selectedProgramLevel;   // AFTER_10 / AFTER_12 / UG
+    @Column(nullable = false)
     private Boolean preferenceLocked = false;
+
+    @Column(nullable = false)
     private Boolean profileLocked = false;
     private LocalDateTime lockedAt;
+
+    private String applicationStatus = "PENDING"; // PENDING, APPROVED, REJECTED
+    private String adminRemarks;
 }

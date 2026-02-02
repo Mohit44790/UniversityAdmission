@@ -118,6 +118,7 @@ public class StudentProfileService {
 
         profile.setProfileLocked(true);
         profile.setLockedAt(LocalDateTime.now());
+        profile.setApplicationStatus("PENDING");
 
         repository.save(profile);
     }
@@ -147,4 +148,5 @@ public class StudentProfileService {
     public List<StudentProfile> getSubmittedProfiles() {
         return repository.findByProfileLockedTrue();
     }
+
 }

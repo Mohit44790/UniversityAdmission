@@ -5,20 +5,18 @@ import com.dseu.admission.repository.CollegeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class CollegeService {
 
     private final CollegeRepository repository;
 
-    public College create(College college) {
+    public College createCollege(College college) {
+
+        if (repository.existsByCollegeName(college.getCollegeName())) {
+            throw new RuntimeException("College already exists");
+        }
+
         return repository.save(college);
     }
-
-    public List<College> getAll() {
-        return repository.findAll();
-    }
 }
-

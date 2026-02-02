@@ -3,6 +3,7 @@ package com.dseu.admission.controller;
 import com.dseu.admission.entity.ProgramLevel;
 import com.dseu.admission.service.ProgramLevelService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/program-level")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class ProgramLevelController {
 
     private final ProgramLevelService service;
@@ -24,3 +26,4 @@ public class ProgramLevelController {
         return service.getAll();
     }
 }
+
