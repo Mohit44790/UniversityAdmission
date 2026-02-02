@@ -149,7 +149,7 @@ const DashboardMessage = ({
           className="mt-6 w-full py-3 cursor-pointer bg-blue-600 text-white rounded-xl shadow-md hover:bg-blue-700 hover:shadow-xl transition-all active:scale-95"
         >
           {buttonText}
-        </button>
+        </button> 
       </div>
     </div>
   )
