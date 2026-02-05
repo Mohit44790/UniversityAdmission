@@ -6,7 +6,7 @@ export const fetchProgramsByLevel = createAsyncThunk(
   "program/fetchByLevel",
   async (levelCode, { rejectWithValue }) => {
     try {
-      const res = await api.get(`/api/admin/programs?level=${levelCode}`);
+      const res = await api.get(`/api/student/programs?level=${levelCode}`);
       return res.data;
     } catch {
       return rejectWithValue("Failed to load programs");
