@@ -9,21 +9,24 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/program-level")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 public class ProgramLevelController {
 
     private final ProgramLevelService service;
 
-    @PostMapping
+    // ================= ADMIN CREATE =================
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/api/admin/program-level")
     public ProgramLevel create(@RequestBody ProgramLevel level) {
         return service.create(level.getCode(), level.getName());
     }
 
-    @GetMapping
-    public List<ProgramLevel> getAll() {
+    // ================= STUDENT VIEW =================
+    @PreAuthorize("hasAnyRole('STUDENT','ADMIN')")
+    @GetMapping("/api/student/program-level")
+    public List<ProgramLevel> getAllForStudent() {
         return service.getAll();
     }
 }
+
 
