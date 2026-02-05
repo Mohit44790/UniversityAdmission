@@ -21,9 +21,11 @@ public class AdminController {
     private final StudentProfileRepository studentProfileRepository;
     private final StudentPreferenceRepository studentPreferenceRepository;
 
-    // ✅ 1️⃣ Get all submitted (locked) applications
+    // ===============================
+    // ALL SUBMITTED APPLICATIONS
+    // ===============================
     @GetMapping("/applications")
-    public ResponseEntity<List<StudentProfile>> getAllSubmittedApplications() {
+    public ResponseEntity<List<StudentProfile>> getSubmittedApplications() {
 
         List<StudentProfile> applications = studentProfileRepository.findAll()
                 .stream()
@@ -33,23 +35,28 @@ public class AdminController {
         return ResponseEntity.ok(applications);
     }
 
-    // ✅ 2️⃣ Approve / Reject application
+    // ===============================
+    // APPROVE / REJECT APPLICATION
+    // ===============================
     @PutMapping("/application/{userId}")
-    public ResponseEntity<?> updateApplicationStatus(
+    public ResponseEntity<?> updateStatus(
             @PathVariable String userId,
-            @RequestBody Map<String, String> payload) {
+            @RequestBody Map<String,String> payload) {
 
         StudentProfile profile = studentProfileRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
-        profile.setApplicationStatus(payload.get("status"));   // ✅ FIXED
-        profile.setAdminRemarks(payload.get("remarks"));       // ✅ FIXED
+        profile.setApplicationStatus(payload.get("status"));   // APPROVED / REJECTED
+        profile.setAdminRemarks(payload.get("remarks"));
 
         studentProfileRepository.save(profile);
-        return ResponseEntity.ok("Application updated successfully");
+
+        return ResponseEntity.ok("Application updated");
     }
 
-    // ✅ 3️⃣ Get all student preferences (for allotment)
+    // ===============================
+    // ALL STUDENT PREFERENCES
+    // ===============================
     @GetMapping("/preferences")
     public ResponseEntity<List<StudentPreference>> getAllPreferences() {
         return ResponseEntity.ok(studentPreferenceRepository.findAll());
