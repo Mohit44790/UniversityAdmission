@@ -90,7 +90,7 @@ const ProgramsByLevel = () => {
           onClick={handleNext}
           className="mt-4 ml-3 bg-green-600 text-white px-6 py-2 rounded"
         >
-          Next → Preference
+          Next Preference
         </button>
       )}
     </div>
