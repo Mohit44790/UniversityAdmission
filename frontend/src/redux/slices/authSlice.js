@@ -28,6 +28,7 @@ export const loginUser = createAsyncThunk(
       const { token, ...user } = response.data;
       setSessionData("token", token);
       setSessionData("user", user);
+      setSessionData("role", user.role); 
       
       return { token, user };
     } catch (error) {
