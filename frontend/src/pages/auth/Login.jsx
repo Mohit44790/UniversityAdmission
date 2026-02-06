@@ -25,9 +25,17 @@ const Login = () => {
   const res = await dispatch(loginUser(formData));
 
   if (res.meta.requestStatus === "fulfilled") {
-    toast.success("Login successful");
+  toast.success("Login successful");
+
+  const role = res.payload.user.role;
+
+  if (role === "ADMIN") {
+    navigate("/admin/dashboard");
+  } else {
     navigate("/dashboard");
-  } 
+  }
+}
+
 };
 
   return (

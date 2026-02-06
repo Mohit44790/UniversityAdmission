@@ -33,21 +33,26 @@ const AppRoutes = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* 🔐 Protected */}
-        <Route element={<ProtectedRoute />}>
-          <Route element={<Layouts />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      {/* STUDENT ROUTES */}
+<Route element={<ProtectedRoute role="STUDENT" />}>
+  <Route element={<Layouts />}>
+    <Route path="/dashboard" element={<Dashboard />} />
 
-            {/* 🧩 PROFILE STEPPER */}
-            <Route path="/profile" element={<ProfileLayout />}>
-              <Route index element={<Profile />} />
-              <Route path="bank" element={<BankDetails />} />
-              <Route path="family" element={<Family />} />
-              <Route path="other" element={<OtherDetails />} />
-              <Route path="documents" element={<UploadDocuments />} />
-            </Route>
-          </Route>
-        </Route>
+    <Route path="/profile" element={<ProfileLayout />}>
+      <Route index element={<Profile />} />
+      <Route path="bank" element={<BankDetails />} />
+      <Route path="family" element={<Family />} />
+      <Route path="other" element={<OtherDetails />} />
+      <Route path="documents" element={<UploadDocuments />} />
+    </Route>
+  </Route>
+</Route>
+{/* ADMIN ROUTES */}
+<Route element={<ProtectedRoute role="ADMIN" />}>
+  <Route element={<Layouts />}>
+    <Route path="/admin/dashboard" element={<AdminDashboard />} />
+  </Route>
+</Route>
       </Routes>
     </Suspense>
   );
