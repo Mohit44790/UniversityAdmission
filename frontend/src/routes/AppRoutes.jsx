@@ -12,6 +12,7 @@ import BankDetails from "../pages/profileComplete/BankDetails";
 import Family from "../pages/profileComplete/Family";
 import OtherDetails from "../pages/profileComplete/OtherDetails";
 import UploadDocuments from "../pages/profileComplete/UploadDocuments";
+import PreferencePage from "../components/program/PreferencePage";
 
 const Login = lazy(() => import("../pages/auth/Login"));
 const Signup = lazy(() => import("../pages/auth/Signup"));
@@ -37,6 +38,7 @@ const AppRoutes = () => {
 <Route element={<ProtectedRoute role="STUDENT" />}>
   <Route element={<Layouts />}>
     <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="student/preferences" element={<PreferencePage />} />
 
     <Route path="/profile" element={<ProfileLayout />}>
       <Route index element={<Profile />} />
