@@ -52,11 +52,11 @@ const Login = () => {
          {/* Content */}
         <div className="relative z-10 h-full flex flex-col justify-center px-10">
          <div className="flex items-center justify-center">
-  <img src={dseuLogo} alt="DSEU Logo" className="w-24 h-24 object-contain" />
+  <img src={dseuLogo} alt="DSEU Logo" className="w-28 h-28 object-contain" />
 </div>
 
-          <h2 className="  text-3xl font-bold text-center mb-8 tracking-wide">
-            DSEU Admission Portal 
+          <h2 className="  text-3xl text-blue-600 font-bold text-center mb-8 tracking-wide">
+            DSEU Admission Portal  
           </h2>
         <form onSubmit={handleSubmit} className='space-y-7'>
           {/* Email */}
