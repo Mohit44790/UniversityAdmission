@@ -2,8 +2,10 @@ package com.dseu.admission.controller;
 
 import com.dseu.admission.entity.StudentPreference;
 import com.dseu.admission.entity.StudentProfile;
+import com.dseu.admission.entity.User;
 import com.dseu.admission.repository.StudentPreferenceRepository;
 import com.dseu.admission.repository.StudentProfileRepository;
+import com.dseu.admission.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +22,7 @@ public class AdminController {
 
     private final StudentProfileRepository studentProfileRepository;
     private final StudentPreferenceRepository studentPreferenceRepository;
-
+    private final UserRepository userRepository;
     // ===============================
     // ALL SUBMITTED APPLICATIONS
     // ===============================
@@ -34,6 +36,8 @@ public class AdminController {
 
         return ResponseEntity.ok(applications);
     }
+
+
 
     // ===============================
     // APPROVE / REJECT APPLICATION
@@ -60,5 +64,16 @@ public class AdminController {
     @GetMapping("/preferences")
     public ResponseEntity<List<StudentPreference>> getAllPreferences() {
         return ResponseEntity.ok(studentPreferenceRepository.findAll());
+    }
+
+    @GetMapping("/students")
+    public ResponseEntity<List<User>> getAllRegisteredStudents() {
+
+        List<User> students = userRepository.findAll()
+                .stream()
+                .filter(u -> u.getRole().name().equals("STUDENT"))
+                .toList();
+
+        return ResponseEntity.ok(students);
     }
 }
