@@ -57,6 +57,50 @@ const AdminDashboard = () => {
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
+      {/* ================= REGISTERED STUDENTS ================= */}
+
+<h2 className="text-2xl font-semibold mt-10 mb-4 text-indigo-700">
+  Registered Students
+</h2>
+
+<div className="bg-white shadow rounded-lg overflow-hidden">
+  <table className="min-w-full divide-y divide-gray-200">
+    <thead className="bg-gray-50">
+      <tr>
+        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mobile</th>
+        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Verified</th>
+      </tr>
+    </thead>
+
+    <tbody className="bg-white divide-y divide-gray-200">
+      {students.map((stu) => (
+        <tr key={stu.id}>
+          <td className="px-6 py-4">{stu.fullName}</td>
+          <td className="px-6 py-4">{stu.email}</td>
+          <td className="px-6 py-4">{stu.mobile}</td>
+          <td className="px-6 py-4">
+            {stu.emailVerified ? (
+              <span className="text-green-600 font-semibold">Verified</span>
+            ) : (
+              <span className="text-red-600 font-semibold">Not Verified</span>
+            )}
+          </td>
+        </tr>
+      ))}
+
+      {students.length === 0 && (
+        <tr>
+          <td colSpan="4" className="text-center p-4">
+            No students registered yet.
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
       <h1 className="text-3xl font-bold mb-6 text-indigo-700">Admin Dashboard</h1>
 
       <div className="bg-white shadow rounded-lg overflow-hidden">
