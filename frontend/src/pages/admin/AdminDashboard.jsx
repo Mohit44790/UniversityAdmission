@@ -7,6 +7,19 @@ const AdminDashboard = () => {
   const { token } = useSelector((state) => state.auth);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [students, setStudents] = useState([]);
+
+  const fetchStudents = async () => {
+  try {
+    const res = await axios.get("http://localhost:8080/api/admin/students", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setStudents(res.data);
+  } catch (err) {
+    toast.error("Failed to fetch students");
+  }
+};
+
 
   const fetchApplications = async () => {
     try {
@@ -37,6 +50,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     fetchApplications();
+    fetchStudents();
   }, []);
 
   if (loading) return <div className="p-10 text-center">Loading...</div>;
