@@ -1,6 +1,7 @@
 package com.dseu.admission.controller;
 
 import com.dseu.admission.entity.StudentEducation;
+import com.dseu.admission.entity.StudentSubjectMarks;
 import com.dseu.admission.service.StudentEducationService;
 import com.dseu.admission.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -24,19 +25,9 @@ public class StudentEducationController {
     }
 
     // ===============================
-    // SAVE EDUCATION
+    // STEP 1 – SELECT EDUCATION TYPE
     // ===============================
-    @PostMapping
-    public ResponseEntity<?> saveEducation(
-            @RequestHeader("Authorization") String auth,
-            @RequestParam String programLevel,
-            @RequestBody StudentEducation edu) {
-
-        service.save(getUserId(auth), edu, programLevel);
-        return ResponseEntity.ok("Education saved");
-    }
-
-    @PostMapping("/select-education")
+    @PostMapping("/select")
     public ResponseEntity<?> selectEducation(
             @RequestHeader("Authorization") String auth,
             @RequestParam String type) {
@@ -44,6 +35,44 @@ public class StudentEducationController {
         service.selectEducationType(getUserId(auth), type);
         return ResponseEntity.ok("Education type saved");
     }
+
+    // ===============================
+    // STEP 2 – SAVE ELIGIBILITY FLAGS
+    // ===============================
+    @PostMapping("/eligibility")
+    public ResponseEntity<?> saveEducation(
+            @RequestHeader("Authorization") String auth,
+            @RequestParam String programLevel,
+            @RequestBody StudentEducation edu) {
+
+        service.save(getUserId(auth), edu, programLevel);
+        return ResponseEntity.ok("Education eligibility saved");
+    }
+
+    // ===============================
+    // STEP 3 – SAVE QUALIFICATION FORM
+    // ===============================
+    @PostMapping("/qualification")
+    public ResponseEntity<?> saveQualification(
+            @RequestHeader("Authorization") String auth,
+            @RequestBody StudentEducation edu) {
+
+        service.saveQualification(getUserId(auth), edu);
+        return ResponseEntity.ok("Qualification saved");
+    }
+
+    // ===============================
+    // STEP 4 – SAVE SUBJECT MARKS
+    // ===============================
+    @PostMapping("/marks")
+    public ResponseEntity<?> saveMarks(
+            @RequestHeader("Authorization") String auth,
+            @RequestBody List<StudentSubjectMarks> marks) {
+
+        service.saveSubjectMarks(getUserId(auth), marks);
+        return ResponseEntity.ok("Marks saved");
+    }
+
     // ===============================
     // GET EDUCATION
     // ===============================
@@ -55,7 +84,7 @@ public class StudentEducationController {
     }
 
     // ===============================
-    // DELETE EDUCATION
+    // DELETE
     // ===============================
     @DeleteMapping
     public ResponseEntity<?> deleteEducation(
@@ -65,19 +94,11 @@ public class StudentEducationController {
         return ResponseEntity.ok("Education deleted");
     }
 
+    // ===============================
+    // GET ALLOWED PROGRAM LEVELS
+    // ===============================
     @GetMapping("/allowed-program-levels")
     public List<String> getLevels(@RequestHeader("Authorization") String auth) {
         return service.getAllowedProgramLevels(getUserId(auth));
     }
-
-    @PostMapping("/details")
-    public ResponseEntity<?> saveDetails(
-            @RequestHeader("Authorization") String auth,
-            @RequestBody StudentEducation edu) {
-
-        service.saveDetails(getUserId(auth), edu);
-        return ResponseEntity.ok("Education details saved");
-    }
-
 }
-

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../config/api";
 
 // ==========================
-// FETCH EDUCATION
+// FETCH BASIC EDUCATION
 // ==========================
 export const fetchEducation = createAsyncThunk(
   "education/fetch",
@@ -17,7 +17,7 @@ export const fetchEducation = createAsyncThunk(
 );
 
 // ==========================
-// SAVE EDUCATION
+// SAVE BASIC EDUCATION
 // ==========================
 export const saveEducation = createAsyncThunk(
   "education/save",
@@ -30,6 +30,72 @@ export const saveEducation = createAsyncThunk(
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || "Failed to save education");
+    }
+  }
+);
+
+// ==========================
+// SAVE QUALIFICATION
+// ==========================
+export const saveQualification = createAsyncThunk(
+  "education/saveQualification",
+  async (data, { rejectWithValue }) => {
+    try {
+      const res = await api.post(
+        "/api/student/education/qualification",
+        data
+      );
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || "Failed to save qualification");
+    }
+  }
+);
+
+// ==========================
+// SAVE SUBJECT MARKS
+// ==========================
+export const saveMarks = createAsyncThunk(
+  "education/saveMarks",
+  async (marksList, { rejectWithValue }) => {
+    try {
+      const res = await api.post(
+        "/api/student/education/marks",
+        marksList
+      );
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || "Failed to save marks");
+    }
+  }
+);
+
+// ==========================
+// FETCH QUALIFICATION
+// ==========================
+export const fetchQualification = createAsyncThunk(
+  "education/fetchQualification",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await api.get("/api/student/education/qualification");
+      return res.data;
+    } catch {
+      return rejectWithValue("Failed to fetch qualification");
+    }
+  }
+);
+
+// ==========================
+// FETCH MARKS
+// ==========================
+export const fetchMarks = createAsyncThunk(
+  "education/fetchMarks",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await api.get("/api/student/education/marks");
+      return res.data;
+    } catch {
+      return rejectWithValue("Failed to fetch marks");
     }
   }
 );
@@ -49,10 +115,15 @@ export const deleteEducation = createAsyncThunk(
   }
 );
 
+// ==========================
+// SLICE
+// ==========================
 const studentEducationSlice = createSlice({
   name: "education",
   initialState: {
     data: null,
+    qualification: null,
+    marks: [],
     loading: false,
     error: null,
     message: null,
@@ -60,6 +131,7 @@ const studentEducationSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // BASIC EDUCATION
       .addCase(fetchEducation.pending, (state) => {
         state.loading = true;
       })
@@ -76,8 +148,27 @@ const studentEducationSlice = createSlice({
         state.message = action.payload;
       })
 
+      // QUALIFICATION
+      .addCase(saveQualification.fulfilled, (state, action) => {
+        state.message = action.payload;
+      })
+      .addCase(fetchQualification.fulfilled, (state, action) => {
+        state.qualification = action.payload;
+      })
+
+      // MARKS
+      .addCase(saveMarks.fulfilled, (state, action) => {
+        state.message = action.payload;
+      })
+      .addCase(fetchMarks.fulfilled, (state, action) => {
+        state.marks = action.payload;
+      })
+
+      // DELETE
       .addCase(deleteEducation.fulfilled, (state) => {
         state.data = null;
+        state.qualification = null;
+        state.marks = [];
       });
   },
 });
