@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const QualificationDetails = () => {
   const [form, setForm] = useState({
@@ -12,7 +13,7 @@ const QualificationDetails = () => {
   });
 
   const [errors, setErrors] = useState({});
-
+const navigate = useNavigate();
   // =========================
   // Handle input change
   // =========================
@@ -45,7 +46,7 @@ const QualificationDetails = () => {
     if (!validate()) return;
 
     console.log("Qualification Data:", form);
-
+navigate("/student/subject-marks");
     // TODO: connect API / Redux
   };
 
