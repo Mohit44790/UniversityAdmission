@@ -13,10 +13,11 @@ public class StudentEducation {
     @Id
     private String studentId;
 
-    private Boolean passed8;
-    private Boolean passed10;
-    private Boolean passed12;
-    private Boolean iti;
-    private Boolean ug;
+    private Boolean passed8 = false;
+    private Boolean passed10 = false;
+    private Boolean passed12 = false;
+    private Boolean iti = false;
+    private Boolean ug = false;
 }
+
 

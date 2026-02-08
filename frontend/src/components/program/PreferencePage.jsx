@@ -2,25 +2,37 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProgramCollegesByLevel } from "../../redux/slices/programCollegeSlice";
 import api from "../../redux/config/api";
+import { useNavigate } from "react-router-dom";
 
 const PreferencePage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { list } = useSelector((s) => s.programCollege);
+
   const [preferences, setPreferences] = useState([]);
-const [locked, setLocked] = useState(false);
-const navigate = useNavigate();
-  
+  const [locked, setLocked] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const level = localStorage.getItem("selectedLevel");
 
+  // Load program colleges
   useEffect(() => {
-    if (level) {
-      dispatch(fetchProgramCollegesByLevel(level));
-    }
+    if (level) dispatch(fetchProgramCollegesByLevel(level));
   }, [level]);
 
-  // add preference
+  // Load lock state
+  useEffect(() => {
+    const savedLock = localStorage.getItem("prefLocked");
+    if (savedLock === "true") setLocked(true);
+  }, []);
+
+  // ==========================
+  // ADD PREFERENCE
+  // ==========================
   const addPreference = (pc) => {
+    if (locked) return alert("Preferences already locked");
+
     const exists = preferences.find((p) => p.id === pc.id);
     if (exists) return alert("Already added");
 
@@ -35,74 +47,85 @@ const navigate = useNavigate();
     ]);
   };
 
-  // remove preference
+  // ==========================
+  // REMOVE
+  // ==========================
   const removePreference = (id) => {
+    if (locked) return;
+
     const updated = preferences.filter((p) => p.id !== id);
-    setPreferences(
-      updated.map((p, i) => ({
-        ...p,
-        order: i + 1,
-      }))
-    );
+    setPreferences(updated.map((p, i) => ({ ...p, order: i + 1 })));
   };
 
-  useEffect(() => {
-  const savedLock = localStorage.getItem("prefLocked");
-  if (savedLock === "true") setLocked(true);
-}, []);
+  // ==========================
+  // REORDER
+  // ==========================
+  const moveUp = (index) => {
+    if (index === 0 || locked) return;
 
-const moveUp = (index) => {
-  if (index === 0 || locked) return;
+    const updated = [...preferences];
+    [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
+    setPreferences(updated.map((p, i) => ({ ...p, order: i + 1 })));
+  };
 
-  const updated = [...preferences];
-  [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
+  const moveDown = (index) => {
+    if (index === preferences.length - 1 || locked) return;
 
-  setPreferences(updated.map((p, i) => ({ ...p, order: i + 1 })));
-};
+    const updated = [...preferences];
+    [updated[index + 1], updated[index]] = [updated[index], updated[index + 1]];
+    setPreferences(updated.map((p, i) => ({ ...p, order: i + 1 })));
+  };
 
-const moveDown = (index) => {
-  if (index === preferences.length - 1 || locked) return;
-
-  const updated = [...preferences];
-  [updated[index + 1], updated[index]] = [updated[index], updated[index + 1]];
-
-  setPreferences(updated.map((p, i) => ({ ...p, order: i + 1 })));
-};
-
-const lockPreferences = async () => {
-  if (preferences.length < 8) {
-    return alert("Minimum 8 preferences required before locking");
-  }
-
-  await api.post("/api/student/preferences/lock");
-  localStorage.setItem("prefLocked", "true");
-  setLocked(true);
-};
-
-  // submit
+  // ==========================
+  // SAVE
+  // ==========================
   const handleSubmit = async () => {
-  if (preferences.length < 8) {
-    return alert("Minimum 8 preferences required");
-  }
+    if (preferences.length < 2) {
+      return alert("Minimum 8 preferences required");
+    }
 
-  const payload = preferences.map((p, i) => ({
-    programCollege: { id: p.id },
-    preferenceOrder: i + 1,
-  }));
+    try {
+      setSaving(true);
 
-  await api.post("/api/student/preferences", payload);
-  alert("Preferences saved successfully");
-};
+      const payload = preferences.map((p, i) => ({
+        programCollege: { id: p.id },
+        preferenceOrder: i + 1,
+      }));
 
+      await api.post("/api/student/preferences", payload);
+      alert("Preferences saved successfully");
+    } catch (err) {
+      alert("Failed to save preferences");
+    } finally {
+      setSaving(false);
+    }
+  };
 
-const goNext = () => {
-  if (!locked) {
-    alert("Lock preferences first");
-    return;
-  }
-  navigate("/student/education");
-};
-  
+  // ==========================
+  // LOCK
+  // ==========================
+  const lockPreferences = async () => {
+    if (preferences.length < 2) {
+      return alert("Minimum 8 preferences required before locking");
+    }
+
+    try {
+      await api.post("/api/student/preferences/lock");
+      localStorage.setItem("prefLocked", "true");
+      setLocked(true);
+      alert("Preferences locked successfully");
+    } catch {
+      alert("Failed to lock preferences");
+    }
+  };
+
+  // ==========================
+  // NEXT PAGE
+  // ==========================
+  const goNext = () => {
+    if (!locked) return alert("Lock preferences first");
+    navigate("/student/education");
+  };
 
   return (
     <div className="p-6">
@@ -115,12 +138,14 @@ const goNext = () => {
             <h3 className="font-semibold">{pc.program.programName}</h3>
             <p>{pc.college.collegeName}</p>
 
-            <button
-              onClick={() => addPreference(pc)}
-              className="mt-2 bg-blue-600 text-white px-3 py-1 rounded"
-            >
-              Add Preference
-            </button>
+            {!locked && (
+              <button
+                onClick={() => addPreference(pc)}
+                className="mt-2 bg-blue-600 text-white px-3 py-1 rounded"
+              >
+                Add Preference
+              </button>
+            )}
           </div>
         ))}
       </div>
@@ -129,32 +154,59 @@ const goNext = () => {
       <div className="mt-6">
         <h3 className="font-semibold">Your Preferences</h3>
 
-        {preferences.map((p) => (
+        {preferences.map((p, index) => (
           <div
             key={p.id}
-            className="flex justify-between border p-2 mt-2 rounded"
+            className="flex justify-between items-center border p-2 mt-2 rounded"
           >
             <span>
               {p.order}. {p.program} - {p.college}
             </span>
 
-            <button
-              onClick={() => removePreference(p.id)}
-              className="text-red-500"
-            >
-              Remove
-            </button>
+            {!locked && (
+              <div className="flex gap-2">
+                <button onClick={() => moveUp(index)}>⬆</button>
+                <button onClick={() => moveDown(index)}>⬇</button>
+                <button
+                  onClick={() => removePreference(p.id)}
+                  className="text-red-500"
+                >
+                  Remove
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>
 
-      {/* SUBMIT */}
-      {preferences.length > 0 && (
+      {/* SAVE */}
+      {!locked && preferences.length > 0 && (
         <button
           onClick={handleSubmit}
+          disabled={saving}
           className="mt-6 bg-green-600 text-white px-6 py-2 rounded"
         >
-          Submit Preferences
+          Save Preferences
+        </button>
+      )}
+
+      {/* LOCK */}
+      {!locked && preferences.length >= 2 && (
+        <button
+          onClick={lockPreferences}
+          className="mt-6 ml-3 bg-red-600 text-white px-6 py-2 rounded"
+        >
+          🔒 Lock Preferences
+        </button>
+      )}
+
+      {/* NEXT */}
+      {locked && (
+        <button
+          onClick={goNext}
+          className="mt-6 bg-blue-700 text-white px-6 py-2 rounded"
+        >
+          Next → Education
         </button>
       )}
     </div>
