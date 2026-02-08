@@ -6,8 +6,10 @@ import api from "../../redux/config/api";
 const PreferencePage = () => {
   const dispatch = useDispatch();
   const { list } = useSelector((s) => s.programCollege);
-
   const [preferences, setPreferences] = useState([]);
+const [locked, setLocked] = useState(false);
+const navigate = useNavigate();
+  
 
   const level = localStorage.getItem("selectedLevel");
 
@@ -44,16 +46,63 @@ const PreferencePage = () => {
     );
   };
 
+  useEffect(() => {
+  const savedLock = localStorage.getItem("prefLocked");
+  if (savedLock === "true") setLocked(true);
+}, []);
+
+const moveUp = (index) => {
+  if (index === 0 || locked) return;
+
+  const updated = [...preferences];
+  [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
+
+  setPreferences(updated.map((p, i) => ({ ...p, order: i + 1 })));
+};
+
+const moveDown = (index) => {
+  if (index === preferences.length - 1 || locked) return;
+
+  const updated = [...preferences];
+  [updated[index + 1], updated[index]] = [updated[index], updated[index + 1]];
+
+  setPreferences(updated.map((p, i) => ({ ...p, order: i + 1 })));
+};
+
+const lockPreferences = async () => {
+  if (preferences.length < 8) {
+    return alert("Minimum 8 preferences required before locking");
+  }
+
+  await api.post("/api/student/preferences/lock");
+  localStorage.setItem("prefLocked", "true");
+  setLocked(true);
+};
+
   // submit
   const handleSubmit = async () => {
-    const payload = preferences.map((p, i) => ({
-      programCollege: { id: p.id },
-      preferenceOrder: i + 1,
-    }));
+  if (preferences.length < 8) {
+    return alert("Minimum 8 preferences required");
+  }
 
-    await api.post("/api/student/preferences", payload);
-    alert("Preferences saved successfully");
-  };
+  const payload = preferences.map((p, i) => ({
+    programCollege: { id: p.id },
+    preferenceOrder: i + 1,
+  }));
+
+  await api.post("/api/student/preferences", payload);
+  alert("Preferences saved successfully");
+};
+
+
+const goNext = () => {
+  if (!locked) {
+    alert("Lock preferences first");
+    return;
+  }
+  navigate("/student/education");
+};
+  
 
   return (
     <div className="p-6">
