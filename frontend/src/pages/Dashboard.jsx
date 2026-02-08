@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchStudentProfile } from "../redux/slices/profileSlice";
 import { useNavigate } from "react-router-dom";
 import ProgramsByLevel from "../components/program/ProgramsByLevel";
+import EducationPage from "./student/EducationPage";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -121,6 +122,7 @@ const Dashboard = () => {
         </div>
 
       </div>
+      <EducationPage />
       <ProgramsByLevel />
     </div>
   );

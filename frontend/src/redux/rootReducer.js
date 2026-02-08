@@ -5,6 +5,7 @@ import programLevelReducer from "../redux/slices/programLevelSlice";
 import programReducer from "../redux/slices/programSlice";
 import collegeReducer from "../redux/slices/collegeSlice";
 import programCollegeReducer from "../redux/slices/programCollegeSlice";
+import studentEducationReducer from "../redux/slices/studentEducationSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
     program: programReducer,
     college: collegeReducer,
     programCollege: programCollegeReducer,
+    education: studentEducationReducer,
 });
 
 
