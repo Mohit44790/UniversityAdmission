@@ -29,7 +29,7 @@ const EducationPage = () => {
 
   const save = async () => {
     await dispatch(saveEducation({ programLevel, data: form }));
-    navigate("/student/rank");
+    // navigate("/student/rank");
   };
 
   return (
@@ -114,7 +114,7 @@ const EducationPage = () => {
           onClick={save}
           className="bg-green-600 hover:bg-green-700 text-white px-8 py-2 rounded"
         >
-          Save & Continue →
+          Save 
         </button>
       </div>
     </div>

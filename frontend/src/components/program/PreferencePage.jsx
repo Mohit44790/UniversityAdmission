@@ -124,7 +124,7 @@ const PreferencePage = () => {
   // ==========================
   const goNext = () => {
     if (!locked) return alert("Lock preferences first");
-    navigate("/student/education");
+    navigate("/student/qualification-details");
   };
 
   return (
