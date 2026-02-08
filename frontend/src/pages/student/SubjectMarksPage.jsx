@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SUBJECT_OPTIONS = [
   "Accountancy",
@@ -21,6 +22,7 @@ const SubjectMarksPage = () => {
     { subject: "", total: "", obtained: "" },
     { subject: "", total: "", obtained: "" },
   ]);
+  const navigate = useNavigate();
 
   // ==============================
   // HANDLE CHANGE
@@ -53,6 +55,7 @@ const SubjectMarksPage = () => {
   const handleSave = () => {
     console.log("Subject Marks:", subjects);
     alert("Marks saved successfully");
+    navigate("/student/upload-documents");
     // TODO → API / Redux
   };
 

@@ -13,41 +13,40 @@ const QualificationDetails = () => {
   });
 
   const [errors, setErrors] = useState({});
-const navigate = useNavigate();
-  // =========================
+  const navigate = useNavigate();
+
   // Handle input change
-  // =========================
   const handleChange = (field, value) => {
     setForm({ ...form, [field]: value });
     setErrors({ ...errors, [field]: "" });
   };
 
-  // =========================
   // Validation
-  // =========================
   const validate = () => {
     const newErrors = {};
 
     if (!form.resultStatus) newErrors.resultStatus = "Select result status";
-    if (!form.yearOfPassing) newErrors.yearOfPassing = "Year of passing cannot be blank";
+    if (!form.yearOfPassing)
+      newErrors.yearOfPassing = "Year of passing cannot be blank";
     if (!form.percentage) newErrors.percentage = "Enter percentage";
-    if (!form.institution) newErrors.institution = "Institution name required";
+    if (!form.institution)
+      newErrors.institution = "Institution name required";
     if (!form.board) newErrors.board = "Board/University required";
-    if (!form.subjects) newErrors.subjects = "Subject combination required";
+    if (!form.subjects)
+      newErrors.subjects = "Subject combination required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // =========================
   // Submit
-  // =========================
   const handleSubmit = () => {
     if (!validate()) return;
 
     console.log("Qualification Data:", form);
-navigate("/student/subject-marks");
-    // TODO: connect API / Redux
+
+    // navigate to subject marks page
+    navigate("/student/subject-marks");
   };
 
   return (
@@ -194,7 +193,7 @@ navigate("/student/subject-marks");
         )}
       </div>
 
-      {/* SUBMIT BUTTON */}
+      {/* SUBMIT */}
       <div className="flex justify-end">
         <button
           onClick={handleSubmit}
