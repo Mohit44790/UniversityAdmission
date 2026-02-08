@@ -1,10 +1,6 @@
-import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchEducation,
-  saveEducation,
-  deleteEducation,
-} from "../../redux/slices/studentEducationSlice";
+import { saveEducation } from "../../redux/slices/studentEducationSlice";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const EducationPage = () => {
@@ -12,6 +8,8 @@ const EducationPage = () => {
   const navigate = useNavigate();
 
   const { data } = useSelector((s) => s.education);
+
+  const programLevel = localStorage.getItem("selectedLevel");
 
   const [form, setForm] = useState({
     passed8: false,
@@ -21,12 +19,6 @@ const EducationPage = () => {
     ug: false,
   });
 
-  const programLevel = localStorage.getItem("selectedLevel");
-
-  useEffect(() => {
-    dispatch(fetchEducation());
-  }, []);
-
   useEffect(() => {
     if (data) setForm(data);
   }, [data]);
@@ -35,26 +27,30 @@ const EducationPage = () => {
     setForm({ ...form, [field]: !form[field] });
   };
 
-  const handleSave = async () => {
+  const save = async () => {
     await dispatch(saveEducation({ programLevel, data: form }));
-    alert("Education saved successfully");
-  };
-
-  const handleDelete = async () => {
-    await dispatch(deleteEducation());
-    alert("Education removed");
-  };
-
-  const goNext = () => {
     navigate("/student/rank");
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold mb-4">Education Details</h2>
+    <div className="max-w-3xl mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-6 text-center">
+        Education Qualification
+      </h2>
 
-      <div className="grid gap-3">
-        <label>
+      {/* Program level indicator */}
+      <div className="bg-blue-50 border border-blue-200 p-4 rounded mb-6">
+        <p className="text-sm text-gray-700">
+          Selected Program Level:
+        </p>
+        <p className="font-semibold text-blue-700">
+          {programLevel}
+        </p>
+      </div>
+
+      {/* Checkbox grid */}
+      <div className="grid grid-cols-2 gap-4 bg-white p-6 rounded shadow">
+        <label className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={form.passed8}
@@ -63,7 +59,7 @@ const EducationPage = () => {
           Passed 8th
         </label>
 
-        <label>
+        <label className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={form.passed10}
@@ -72,7 +68,7 @@ const EducationPage = () => {
           Passed 10th
         </label>
 
-        <label>
+        <label className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={form.passed12}
@@ -81,16 +77,16 @@ const EducationPage = () => {
           Passed 12th
         </label>
 
-        <label>
+        <label className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={form.iti}
             onChange={() => handleChange("iti")}
           />
-          ITI
+          ITI Completed
         </label>
 
-        <label>
+        <label className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={form.ug}
@@ -100,26 +96,25 @@ const EducationPage = () => {
         </label>
       </div>
 
-      <div className="mt-6 flex gap-3">
+      {/* Info */}
+      <div className="mt-6 text-sm text-gray-600">
+        * Select all qualifications you have completed.
+      </div>
+
+      {/* Buttons */}
+      <div className="flex justify-center gap-4 mt-8">
         <button
-          onClick={handleSave}
-          className="bg-green-600 text-white px-6 py-2 rounded"
+          onClick={() => navigate(-1)}
+          className="bg-gray-400 text-white px-6 py-2 rounded"
         >
-          Save Education
+          Back
         </button>
 
         <button
-          onClick={handleDelete}
-          className="bg-red-600 text-white px-6 py-2 rounded"
+          onClick={save}
+          className="bg-green-600 hover:bg-green-700 text-white px-8 py-2 rounded"
         >
-          Delete
-        </button>
-
-        <button
-          onClick={goNext}
-          className="bg-blue-700 text-white px-6 py-2 rounded"
-        >
-          Next → Rank
+          Save & Continue →
         </button>
       </div>
     </div>
