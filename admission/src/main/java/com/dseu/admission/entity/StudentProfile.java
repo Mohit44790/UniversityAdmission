@@ -67,6 +67,11 @@ public class StudentProfile {
     private String photoPath;
     private String signaturePath;
     private String abcDocumentPath;
+    private String marksheet10Path;
+    private String marksheet12Path;
+    private String categoryCertPath;
+    private String itiCertPath;
+    private String ugCertPath;
 
     // Admission flow
     private String selectedProgramLevel;   // AFTER_10 / AFTER_12 / UG

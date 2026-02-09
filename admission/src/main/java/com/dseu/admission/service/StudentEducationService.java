@@ -112,10 +112,11 @@ public class StudentEducationService {
                 repo.findById(userId)
                         .orElseThrow(() -> new RuntimeException("Education not found"));
 
-        // remove old marks safely
-        if (education.getSubjectMarks() != null) {
-            marksRepo.deleteAll(education.getSubjectMarks());
-        }
+        // ❌ DON'T TOUCH LAZY COLLECTION
+        // education.getSubjectMarks()
+
+        // ✅ delete via query
+        marksRepo.deleteByEducation_StudentId(userId);
 
         // assign new
         for (StudentSubjectMarks mark : marksList) {
@@ -124,6 +125,7 @@ public class StudentEducationService {
 
         marksRepo.saveAll(marksList);
     }
+
 
     // ==========================
     // VALIDATION

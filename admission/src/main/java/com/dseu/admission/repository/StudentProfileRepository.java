@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface StudentProfileRepository extends JpaRepository<StudentProfile, String> {
     List<StudentProfile> findByProfileLockedTrue();
+
 }

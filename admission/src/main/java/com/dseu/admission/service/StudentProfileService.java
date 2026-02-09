@@ -1,7 +1,11 @@
 package com.dseu.admission.service;
 
 import com.dseu.admission.dto.*;
+import com.dseu.admission.entity.StudentEducation;
+import com.dseu.admission.entity.StudentPreference;
 import com.dseu.admission.entity.StudentProfile;
+import com.dseu.admission.repository.StudentEducationRepository;
+import com.dseu.admission.repository.StudentPreferenceRepository;
 import com.dseu.admission.repository.StudentProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,14 +18,14 @@ import java.util.List;
 public class StudentProfileService {
 
     private final StudentProfileRepository repository;
+    private final StudentEducationRepository educationRepository;
+    private final StudentPreferenceRepository preferenceRepository;
 
     // ================= BASIC =================
     public void saveBasic(String userId, BasicDetailsRequest req) {
-        StudentProfile profile = getOrCreate(userId);
 
-        if (Boolean.TRUE.equals(profile.getProfileLocked())) {
-            throw new RuntimeException("Profile is locked");
-        }
+        StudentProfile profile = getOrCreate(userId);
+        ensureNotLocked(profile);
 
         profile.setFullName(req.getFullName());
         profile.setDateOfBirth(req.getDateOfBirth());
@@ -38,6 +42,7 @@ public class StudentProfileService {
 
     // ================= FAMILY =================
     public void saveFamily(String userId, FamilyDetailsRequest req) {
+
         StudentProfile profile = getOrCreate(userId);
         ensureNotLocked(profile);
 
@@ -53,6 +58,7 @@ public class StudentProfileService {
 
     // ================= BANK =================
     public void saveBank(String userId, BankDetailsRequest req) {
+
         StudentProfile profile = getOrCreate(userId);
         ensureNotLocked(profile);
 
@@ -67,6 +73,7 @@ public class StudentProfileService {
 
     // ================= OTHER =================
     public void saveOther(String userId, OtherDetailsRequest req) {
+
         StudentProfile profile = getOrCreate(userId);
         ensureNotLocked(profile);
 
@@ -84,6 +91,7 @@ public class StudentProfileService {
 
     // ================= PROGRAM LEVEL =================
     public void selectProgramLevel(String userId, String programLevel) {
+
         StudentProfile profile = getOrCreate(userId);
         ensureNotLocked(profile);
 
@@ -91,25 +99,9 @@ public class StudentProfileService {
         repository.save(profile);
     }
 
-    // ================= DOCUMENT PATHS =================
-    public void updateDocumentPaths(
-            String userId,
-            String photoPath,
-            String signaturePath,
-            String abcPath) {
-
-        StudentProfile profile = getOrCreate(userId);
-        ensureNotLocked(profile);
-
-        profile.setPhotoPath(photoPath);
-        profile.setSignaturePath(signaturePath);
-        profile.setAbcDocumentPath(abcPath);
-
-        repository.save(profile);
-    }
-
-    // ================= FINAL SUBMIT (LOCK) =================
+    // ================= FINAL SUBMIT =================
     public void finalSubmit(String userId) {
+
         StudentProfile profile = getOrCreate(userId);
 
         if (Boolean.TRUE.equals(profile.getProfileLocked())) {
@@ -123,21 +115,41 @@ public class StudentProfileService {
         repository.save(profile);
     }
 
-    // ================= GET PROFILE =================
-    public StudentProfile getProfile(String userId) {
-        return repository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+    // ================= FULL PROFILE =================
+    public FullStudentProfileResponse getFullProfile(String userId) {
+
+        StudentProfile profile = getOrCreate(userId);
+
+        StudentEducation education =
+                educationRepository.findById(userId).orElse(null);
+
+        if (education != null && education.getSubjectMarks() != null) {
+            education.getSubjectMarks().size(); // lazy load fix
+        }
+
+        List<StudentPreference> preferences =
+                preferenceRepository.findByStudentId(userId);
+
+        return FullStudentProfileResponse.builder()
+                .profile(profile)
+                .education(education)
+                .preferences(preferences)
+                .selectedProgramLevel(profile.getSelectedProgramLevel())
+                .profileLocked(profile.getProfileLocked())
+                .build();
     }
 
-    // ================= HELPER METHODS =================
+    // ================= HELPERS =================
     private StudentProfile getOrCreate(String userId) {
-        return repository.findById(userId).orElseGet(() -> {
-            StudentProfile p = new StudentProfile();
-            p.setUserId(userId);
-            p.setProfileLocked(false);
-            p.setPreferenceLocked(false);
-            return p;
-        });
+
+        return repository.findById(userId)
+                .orElseGet(() -> {
+                    StudentProfile p = new StudentProfile();
+                    p.setUserId(userId);
+                    p.setProfileLocked(false);
+                    p.setPreferenceLocked(false);
+                    return repository.save(p);
+                });
     }
 
     private void ensureNotLocked(StudentProfile profile) {
@@ -145,8 +157,8 @@ public class StudentProfileService {
             throw new RuntimeException("Profile is locked. Editing not allowed.");
         }
     }
+
     public List<StudentProfile> getSubmittedProfiles() {
         return repository.findByProfileLockedTrue();
     }
-
 }
