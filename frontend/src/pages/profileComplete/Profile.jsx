@@ -26,30 +26,30 @@ const Profile = () => {
   });
 
   // ================= PREFILL FORM =================
-  useEffect(() => {
-    if (profile) {
-      setFormData({
-        ...formData,
-        fullName: profile.fullName || "",
-        dateOfBirth: profile.dateOfBirth
-          ? profile.dateOfBirth.slice(0, 10)
-          : "",
-        ageAsOnJuly1_2024: profile.ageAsOnJuly1_2024 || "",
-        gender: profile.gender || "",
-        category: profile.category || "",
-        religion: profile.religion || "",
-        nationality: profile.nationality || "",
-        alternateEmail: profile.alternateEmail || "",
-        alternateMobile: profile.alternateMobile || "",
-        permanentAddress: profile.permanentAddress || "",
-        correspondenceAddress: profile.correspondenceAddress || "",
-        enrolledBefore: profile.enrolledBefore || false,
-        enrollmentNumber: profile.enrollmentNumber || "",
-        programmeRegistered: profile.programmeRegistered || "",
-        yearOfRegistration: profile.yearOfRegistration || "",
-      });
-    }
-  }, [profile]);
+ useEffect(() => {
+  if (profile) {
+    setFormData({
+      fullName: profile.fullName || "",
+      dateOfBirth: profile.dateOfBirth
+        ? profile.dateOfBirth.slice(0, 10)
+        : "",
+      ageAsOnJuly1_2024: profile.ageAsOnJuly1_2024 || "",
+      gender: profile.gender || "",
+      category: profile.category || "",
+      religion: profile.religion || "",
+      nationality: profile.nationality || "",
+      alternateEmail: profile.alternateEmail || "",
+      alternateMobile: profile.alternateMobile || "",
+      permanentAddress: profile.permanentAddress || "",
+      correspondenceAddress: profile.correspondenceAddress || "",
+      enrolledBefore: profile.enrolledBefore || false,
+      enrollmentNumber: profile.enrollmentNumber || "",
+      programmeRegistered: profile.programmeRegistered || "",
+      yearOfRegistration: profile.yearOfRegistration || "",
+    });
+  }
+}, [profile]);
+
 
   // ================= HANDLE CHANGE =================
   const handleChange = (e) => {

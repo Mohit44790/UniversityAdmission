@@ -96,10 +96,12 @@ export const fetchStudentProfile = createAsyncThunk(
       return res.data;
 
     } catch (err) {
+      console.log("PROFILE ERROR:", err.response);
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
+
 
 export const finalSubmitProfile = createAsyncThunk(
   "profile/finalSubmit",
@@ -120,10 +122,13 @@ export const finalSubmitProfile = createAsyncThunk(
 const profileSlice = createSlice({
   name: "profile",
   initialState: {
-    profile: getSessionData("studentProfile") || null,
+   profile: null,
+    education: null,
+    preferences: [],
     loading: false,
     error: null,
     successMessage: null
+    
   },
   reducers: {
     clearProfileState: (state) => {
@@ -208,11 +213,15 @@ const profileSlice = createSlice({
       .addCase(fetchStudentProfile.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchStudentProfile.fulfilled, (state, action) => {
+     .addCase(fetchStudentProfile.fulfilled, (state, action) => {
   state.loading = false;
-  state.profile = action.payload;
+  state.profile = action.payload.profile;
+  state.education = action.payload.education;
+  state.preferences = action.payload.preferences;
+
   setSessionData("studentProfile", action.payload);
 })
+
 
       .addCase(fetchStudentProfile.rejected, (state, action) => {
         state.loading = false;

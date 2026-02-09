@@ -10,7 +10,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
 
-  const { profile, loading } = useSelector((state) => state.profile);
+ 
+  const { profile,loading, education, preferences } = useSelector(s => s.profile);
 
   const currentYear = new Date().getFullYear();
   const nextYear = currentYear + 1;
@@ -47,11 +48,11 @@ const Dashboard = () => {
 
   // profile Incomplete 
   const profileCompleted =
-    profile.fullName &&
-    profile.alternateMobile &&
-    profile.permanentAddress &&
+    profile?.fullName &&
+    profile?.alternateMobile &&
+    profile?.permanentAddress &&
     //  profile.motherName &&
-    profile.gender;
+    profile?.gender;
 
   if (!profileCompleted) {
     return (
