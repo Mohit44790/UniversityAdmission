@@ -84,11 +84,31 @@ export const fetchStudentProfile = createAsyncThunk(
   "profile/fetchProfile",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await api.get("/api/student/profile");
+      const token = localStorage.getItem("token");
+
+      const res = await api.get("/api/student/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       setSessionData("studentProfile", res.data);
       return res.data;
+
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const finalSubmitProfile = createAsyncThunk(
+  "profile/finalSubmit",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await api.post("/api/student/final-submit");
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || "Failed to submit profile");
     }
   }
 );
@@ -197,7 +217,11 @@ const profileSlice = createSlice({
       .addCase(fetchStudentProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+      .addCase(finalSubmitProfile.fulfilled, (state, action) => {
+  state.successMessage = action.payload;
+  state.profile.profileLocked = true;
+});
   }
 });
 

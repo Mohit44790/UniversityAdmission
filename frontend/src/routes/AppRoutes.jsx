@@ -16,6 +16,8 @@ import PreferencePage from "../components/program/PreferencePage";
 import QualificationDetails from "../pages/student/QualificationDetails";
 import SubjectMarksPage from "../pages/student/SubjectMarksPage";
 import UploadDocumentsPage from "../pages/student/UploadDocumentsPage";
+import ViewProfile from "../pages/profileComplete/ViewProfile";
+import ReviewSubmitPage from "../pages/student/ReviewSubmitPage";
 
 const Login = lazy(() => import("../pages/auth/Login"));
 const Signup = lazy(() => import("../pages/auth/Signup"));
@@ -41,10 +43,12 @@ const AppRoutes = () => {
 <Route element={<ProtectedRoute role="STUDENT" />}>
   <Route element={<Layouts />}>
     <Route path="/dashboard" element={<Dashboard />} />
+    <Route path="/view-profile" element={<ViewProfile />} />
       <Route path="student/preferences" element={<PreferencePage />} />
       <Route path="student/qualification-details" element={<QualificationDetails />} />
       <Route path="student/subject-marks" element={<SubjectMarksPage />} />
       <Route path="student/upload-documents" element={<UploadDocumentsPage />} />
+      <Route path="student/review-submit" element={<ReviewSubmitPage />} />
 
     <Route path="/profile" element={<ProfileLayout />}>
       <Route index element={<Profile />} />

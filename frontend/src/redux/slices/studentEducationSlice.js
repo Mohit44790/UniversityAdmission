@@ -94,7 +94,7 @@ export const fetchMarks = createAsyncThunk(
     try {
       const res = await api.get("/api/student/education/marks");
       return res.data;
-    } catch {
+    } catch (err) {
       return rejectWithValue("Failed to fetch marks");
     }
   }

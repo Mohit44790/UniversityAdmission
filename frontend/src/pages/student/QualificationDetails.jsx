@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { saveQualification } from "../../redux/slices/studentEducationSlice";
+import { useDispatch } from "react-redux";
 
 const QualificationDetails = () => {
   const [form, setForm] = useState({
@@ -14,7 +16,7 @@ const QualificationDetails = () => {
 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-
+ const dispatch = useDispatch();
   // Handle input change
   const handleChange = (field, value) => {
     setForm({ ...form, [field]: value });
@@ -42,7 +44,7 @@ const QualificationDetails = () => {
   // Submit
   const handleSubmit = () => {
     if (!validate()) return;
-
+dispatch(saveQualification(form));
     console.log("Qualification Data:", form);
 
     // navigate to subject marks page

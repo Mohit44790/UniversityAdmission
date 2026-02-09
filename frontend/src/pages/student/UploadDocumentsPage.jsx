@@ -8,6 +8,7 @@ const UploadDocumentsPage = () => {
   const [files, setFiles] = useState({
     photo: null,
     signature: null,
+    abcFile: null,
     marksheet10: null,
     marksheet12: null,
     categoryCert: null,
@@ -21,132 +22,71 @@ const UploadDocumentsPage = () => {
   // HANDLE FILE CHANGE
   // ======================
   const handleFileChange = (field, file) => {
-    setFiles({ ...files, [field]: file });
+    setFiles((prev) => ({ ...prev, [field]: file }));
+  };
+
+  // ======================
+  // VALIDATION
+  // ======================
+  const validate = () => {
+    if (!files.photo) return alert("Photo required");
+    if (!files.signature) return alert("Signature required");
+    if (!files.abcFile) return alert("ABC ID document required");
+    if (!files.marksheet10) return alert("10th marksheet required");
+    return true;
   };
 
   // ======================
   // UPLOAD
   // ======================
   const handleUpload = async () => {
+    if (!validate()) return;
+
     const formData = new FormData();
 
     Object.keys(files).forEach((key) => {
-      if (files[key]) {
-        formData.append(key, files[key]);
-      }
+      if (files[key]) formData.append(key, files[key]);
     });
 
     try {
       setLoading(true);
-      await api.post("/api/student/upload-documents", formData, {
+
+      await api.post("/api/student/uploads", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       alert("Documents uploaded successfully");
-      navigate("/student/rank");
+      navigate("/student/review-submit");
     } catch (err) {
-      alert("Upload failed");
+      console.error("Upload error:", err);
+      alert(err?.response?.data || "Upload failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white p-6 rounded shadow">
+    <div className="max-w-5xl mx-auto bg-white p-6 rounded shadow">
       <h2 className="text-2xl font-bold mb-6">Upload Documents</h2>
 
       <div className="grid grid-cols-2 gap-6">
 
-        {/* PHOTO */}
-        <div>
-          <label className="block font-medium mb-1">
-            Passport Photo *
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleFileChange("photo", e.target.files[0])}
-            className="border p-2 rounded w-full"
-          />
-        </div>
+        <UploadField label="Passport Photo *" field="photo" accept="image/*" onChange={handleFileChange} file={files.photo} />
 
-        {/* SIGNATURE */}
-        <div>
-          <label className="block font-medium mb-1">
-            Signature *
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleFileChange("signature", e.target.files[0])}
-            className="border p-2 rounded w-full"
-          />
-        </div>
+        <UploadField label="Signature *" field="signature" accept="image/*" onChange={handleFileChange} file={files.signature} />
 
-        {/* 10TH */}
-        <div>
-          <label className="block font-medium mb-1">
-            10th Marksheet *
-          </label>
-          <input
-            type="file"
-            accept=".pdf,image/*"
-            onChange={(e) => handleFileChange("marksheet10", e.target.files[0])}
-            className="border p-2 rounded w-full"
-          />
-        </div>
+        <UploadField label="ABC ID Document *" field="abcFile" accept=".pdf,image/*" onChange={handleFileChange} file={files.abcFile} />
 
-        {/* 12TH */}
-        <div>
-          <label className="block font-medium mb-1">
-            12th Marksheet
-          </label>
-          <input
-            type="file"
-            accept=".pdf,image/*"
-            onChange={(e) => handleFileChange("marksheet12", e.target.files[0])}
-            className="border p-2 rounded w-full"
-          />
-        </div>
+        <UploadField label="10th Marksheet *" field="marksheet10" accept=".pdf,image/*" onChange={handleFileChange} file={files.marksheet10} />
 
-        {/* CATEGORY */}
-        <div>
-          <label className="block font-medium mb-1">
-            Category Certificate
-          </label>
-          <input
-            type="file"
-            accept=".pdf,image/*"
-            onChange={(e) => handleFileChange("categoryCert", e.target.files[0])}
-            className="border p-2 rounded w-full"
-          />
-        </div>
+        <UploadField label="12th Marksheet" field="marksheet12" accept=".pdf,image/*" onChange={handleFileChange} file={files.marksheet12} />
 
-        {/* ITI */}
-        <div>
-          <label className="block font-medium mb-1">
-            ITI Certificate
-          </label>
-          <input
-            type="file"
-            accept=".pdf,image/*"
-            onChange={(e) => handleFileChange("itiCert", e.target.files[0])}
-            className="border p-2 rounded w-full"
-          />
-        </div>
+        <UploadField label="Category Certificate" field="categoryCert" accept=".pdf,image/*" onChange={handleFileChange} file={files.categoryCert} />
 
-        {/* UG */}
-        <div>
-          <label className="block font-medium mb-1">
-            UG Marksheet
-          </label>
-          <input
-            type="file"
-            accept=".pdf,image/*"
-            onChange={(e) => handleFileChange("ugCert", e.target.files[0])}
-            className="border p-2 rounded w-full"
-          />
-        </div>
+        <UploadField label="ITI Certificate" field="itiCert" accept=".pdf,image/*" onChange={handleFileChange} file={files.itiCert} />
+
+        <UploadField label="UG Marksheet" field="ugCert" accept=".pdf,image/*" onChange={handleFileChange} file={files.ugCert} />
+
       </div>
 
       {/* BUTTON */}
@@ -164,3 +104,25 @@ const UploadDocumentsPage = () => {
 };
 
 export default UploadDocumentsPage;
+
+
+// ================= COMPONENT =================
+
+const UploadField = ({ label, field, accept, onChange, file }) => (
+  <div>
+    <label className="block font-medium mb-1">{label}</label>
+
+    <input
+      type="file"
+      accept={accept}
+      onChange={(e) => onChange(field, e.target.files[0])}
+      className="border p-2 rounded w-full"
+    />
+
+    {file && (
+      <p className="text-xs text-green-600 mt-1">
+        Selected: {file.name}
+      </p>
+    )}
+  </div>
+);

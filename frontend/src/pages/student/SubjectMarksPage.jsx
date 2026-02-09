@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { saveMarks } from "../../redux/slices/studentEducationSlice";
+import { useDispatch } from "react-redux";
 
 const SUBJECT_OPTIONS = [
   "Accountancy",
@@ -23,6 +25,7 @@ const SubjectMarksPage = () => {
     { subject: "", total: "", obtained: "" },
   ]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // ==============================
   // HANDLE CHANGE
@@ -52,12 +55,46 @@ const SubjectMarksPage = () => {
   // ==============================
   // SAVE
   // ==============================
-  const handleSave = () => {
-    console.log("Subject Marks:", subjects);
+ const handleSave = async () => {
+  // remove empty rows
+  const filtered = subjects.filter(
+    (s) => s.subject && s.total && s.obtained
+  );
+
+  if (filtered.length === 0) {
+    alert("Please enter at least one subject");
+    return;
+  }
+
+  // validation
+  for (let s of filtered) {
+    if (Number(s.obtained) > Number(s.total)) {
+      alert(`Obtained marks cannot be greater than total in ${s.subject}`);
+      return;
+    }
+  }
+
+  // backend payload
+  const payload = filtered.map((s) => ({
+    subject: s.subject,
+    totalMarks: parseInt(s.total),
+    obtainedMarks: parseInt(s.obtained),
+  }));
+
+  console.log("FINAL PAYLOAD SENT →", JSON.stringify(payload));
+
+  try {
+    await dispatch(saveMarks(payload)).unwrap();
+
     alert("Marks saved successfully");
     navigate("/student/upload-documents");
-    // TODO → API / Redux
-  };
+  } catch (err) {
+    console.error("API ERROR →", err);
+    alert(err || "Failed to save marks");
+  }
+};
+
+
 
   return (
     <div className="max-w-6xl mx-auto bg-white p-6 rounded shadow">
