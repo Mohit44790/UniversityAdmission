@@ -107,7 +107,7 @@ const ProgramsByLevel = () => {
       {confirmed && (
         <button
           onClick={handleNext}
-          className="mt-4 bg-green-600 text-white px-6 py-2 rounded"
+          className="mt-4 bg-green-600 cursor-pointer text-white px-6 py-2 rounded"
         >
           Next Preference
         </button>
