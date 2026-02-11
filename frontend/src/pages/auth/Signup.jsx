@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../../redux/slices/authSlice';
 import { toast } from "react-toastify";
+import dseuLogo from '../../assets/logo/DSEULOGO.svg'
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -53,7 +54,10 @@ const handleSubmit = async (e) => {
 
         {/* Content */}
         <div className="relative z-10 h-full flex flex-col justify-center px-10">
-          <h2 className=" text-3xl font-bold text-center mb-6 tracking-wide">
+              <div className="flex items-center justify-center">
+            <img src={dseuLogo} alt="DSEU Logo" className="w-18 h-18 object-contain" />
+          </div>
+          <h2 className=" text-xl font-bold text-center mb-6 tracking-wide">
             Admission Portal
           </h2>
 
@@ -132,7 +136,7 @@ const handleSubmit = async (e) => {
             <button
               type="submit"
               disabled={loading}
-              className={`bg-white cursor-pointer text-[#4C489D] font-bold uppercase flex items-center justify-center px-6 py-4 rounded-full shadow-lg w-full transition-all duration-300
+              className={`bg-white cursor-pointer text-[#4C489D] font-bold uppercase flex items-center justify-center px-6 py-3 rounded-full shadow-lg w-full transition-all duration-300
                 ${loading ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.02] hover:shadow-xl"}`}
             >
               {loading ? "Registering..." : "Register"}
