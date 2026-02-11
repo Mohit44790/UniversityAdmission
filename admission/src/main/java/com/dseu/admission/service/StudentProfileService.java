@@ -118,14 +118,20 @@ public class StudentProfileService {
     // ================= FULL PROFILE =================
     public FullStudentProfileResponse getFullProfile(String userId) {
 
-        StudentProfile profile = getOrCreate(userId);
+        StudentProfile profile = repository.findById(userId)
+                .orElseGet(() -> {
+                    StudentProfile p = new StudentProfile();
+                    p.setUserId(userId);
+                    p.setProfileLocked(false);
+                    p.setPreferenceLocked(false);
+                    return repository.save(p);
+                });
 
         StudentEducation education =
                 educationRepository.findById(userId).orElse(null);
 
-        if (education != null && education.getSubjectMarks() != null) {
-            education.getSubjectMarks().size(); // lazy load fix
-        }
+        // ❌ REMOVE THIS (wrong fix)
+        // education.getSubjectMarks().size();
 
         List<StudentPreference> preferences =
                 preferenceRepository.findByStudentId(userId);
@@ -138,6 +144,7 @@ public class StudentProfileService {
                 .profileLocked(profile.getProfileLocked())
                 .build();
     }
+
 
     // ================= HELPERS =================
     private StudentProfile getOrCreate(String userId) {

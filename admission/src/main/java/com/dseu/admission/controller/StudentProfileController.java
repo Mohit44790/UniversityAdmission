@@ -65,13 +65,16 @@ public class StudentProfileController {
 
     // 🔥 MAIN PROFILE API
     @GetMapping("/profile")
-    public ResponseEntity<?> getFullProfile(
+    public ResponseEntity<FullStudentProfileResponse> getFullProfile(
             @RequestHeader("Authorization") String auth) {
 
-        return ResponseEntity.ok(
-                service.getFullProfile(getUserId(auth))
-        );
+        String userId = jwtUtil.extractEmail(auth.substring(7));
+
+        FullStudentProfileResponse response = service.getFullProfile(userId);
+
+        return ResponseEntity.ok(response);
     }
+
 
 
 
