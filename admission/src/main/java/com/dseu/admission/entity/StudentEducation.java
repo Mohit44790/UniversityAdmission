@@ -3,7 +3,7 @@ package com.dseu.admission.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 
 @Entity
@@ -35,6 +35,9 @@ public class StudentEducation {
     private String subjects;
 
     // subject marks table
-    @OneToMany(mappedBy = "education", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "education",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonIgnore
     private List<StudentSubjectMarks> subjectMarks;
 }
