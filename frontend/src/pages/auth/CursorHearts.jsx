@@ -2,37 +2,33 @@ import { useEffect } from "react";
 
 const CursorHearts = () => {
   useEffect(() => {
-    const handleMove = (e) => {
+    const moveHearts = (e) => {
       const heart = document.createElement("div");
 
       heart.className =
-        "fixed pointer-events-none w-4 h-4 bg-red-500 rotate-45 animate-[floatHeart_1s_ease-out_forwards] z-[9999]";
+        "fixed pointer-events-none w-2 h-2 bg-pink-500 rotate-45 animate-floatHeart z-[9999]";
 
       heart.style.left = e.clientX + "px";
       heart.style.top = e.clientY + "px";
 
-      // create circle parts of heart
-      const before = document.createElement("div");
-      before.className =
-        "absolute w-4 h-4 bg-red-500 rounded-full -top-2 left-0";
+      const leftCircle = document.createElement("div");
+      leftCircle.className =
+        "absolute w-2 h-2 bg-pink-500 rounded-full -top-2 left-0";
 
-      const after = document.createElement("div");
-      after.className =
-        "absolute w-4 h-4 bg-red-500 rounded-full left-[-8px] top-0";
+      const rightCircle = document.createElement("div");
+      rightCircle.className =
+        "absolute w-2 h-2 bg-pink-500 rounded-full left-[-8px] top-0";
 
-      heart.appendChild(before);
-      heart.appendChild(after);
+      heart.appendChild(leftCircle);
+      heart.appendChild(rightCircle);
 
       document.body.appendChild(heart);
 
-      setTimeout(() => {
-        heart.remove();
-      }, 1000);
+      setTimeout(() => heart.remove(), 1000);
     };
 
-    window.addEventListener("mousemove", handleMove);
-
-    return () => window.removeEventListener("mousemove", handleMove);
+    window.addEventListener("mousemove", moveHearts);
+    return () => window.removeEventListener("mousemove", moveHearts);
   }, []);
 
   return null;

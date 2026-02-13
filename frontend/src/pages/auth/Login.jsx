@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../redux/slices/authSlice';
 import { toast } from 'react-toastify';
 import dseuLogo from '../../assets/logo/DSEULOGO.svg'
+import CursorHearts from './CursorHearts';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -42,7 +43,7 @@ const Login = () => {
   return (
      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#C7C5F4] via-[#9F9BD8] to-[#776BCC]">
       <div className="relative w-125 h-[580px] bg-linear-to-br from-[#5D54A4] to-[#7C78B8] shadow-[0_20px_60px_rgba(0,0,0,0.35)] overflow-hidden rounded-3xl">
-
+  <CursorHearts />
         {/* Background Shapes */}
         <span className="absolute w-120 h-[520px] bg-white/90 top-[-60px] right-[120px] rotate-45 rounded-tr-[72px]" />
         <span className="absolute w-52 h-[220px] bg-[#6C63AC] top-[-180px] right-[-40px] rotate-45 rounded-3xl" />
