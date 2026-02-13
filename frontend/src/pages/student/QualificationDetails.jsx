@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { saveQualification } from "../../redux/slices/studentEducationSlice";
+import { fetchQualification, saveQualification } from "../../redux/slices/studentEducationSlice";
 import { useDispatch } from "react-redux";
 
 const QualificationDetails = () => {
@@ -45,7 +45,9 @@ const QualificationDetails = () => {
   const handleSubmit = () => {
     if (!validate()) return;
 dispatch(saveQualification(form));
+dispatch(fetchQualification(data));
     console.log("Qualification Data:", form);
+    console.log("Qualification Data:", data);
 
     // navigate to subject marks page
     navigate("/student/subject-marks");
