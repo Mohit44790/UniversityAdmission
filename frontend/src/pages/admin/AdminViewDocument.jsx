@@ -2,7 +2,7 @@ import React from 'react'
 
 const AdminViewDocument = () => {
   return (
-    <div>AdminViewDocument</div>
+    <div className='border border-dashed'>AdminViewDocument</div>
   )
 }
 
